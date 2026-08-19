@@ -26,5 +26,19 @@
     "identifier": "ramp",
     "website": "https://ramp.com",
     "careersUrl": "https://ramp.com/careers"
+  },
+  {
+    "name": "N26",
+    "atsType": "greenhouse",
+    "identifier": "n26",
+    "website": "https://n26.com",
+    "careersUrl": "https://n26.com/en-eu/careers"
+  },
+  {
+    "name": "Delivery Hero",
+    "atsType": "smartrecruiters",
+    "identifier": "DeliveryHero",
+    "website": "https://www.deliveryhero.com",
+    "careersUrl": "https://careers.deliveryhero.com"
   }
 ]

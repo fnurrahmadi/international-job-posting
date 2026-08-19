@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS companies (
   name TEXT NOT NULL,
   website TEXT,
   careers_url TEXT,
-  ats_type TEXT NOT NULL CHECK (ats_type IN ('greenhouse', 'lever', 'ashby')),
+  ats_type TEXT NOT NULL CHECK (ats_type IN ('greenhouse', 'lever', 'ashby', 'smartrecruiters')),
   ats_identifier TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
