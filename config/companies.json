@@ -1,0 +1,30 @@
+[
+  {
+    "name": "OpenAI",
+    "atsType": "ashby",
+    "identifier": "openai",
+    "website": "https://openai.com",
+    "careersUrl": "https://openai.com/careers/"
+  },
+  {
+    "name": "Webflow",
+    "atsType": "greenhouse",
+    "identifier": "webflow",
+    "website": "https://webflow.com",
+    "careersUrl": "https://webflow.com/careers"
+  },
+  {
+    "name": "Palantir",
+    "atsType": "lever",
+    "identifier": "palantir",
+    "website": "https://www.palantir.com",
+    "careersUrl": "https://www.palantir.com/careers/"
+  },
+  {
+    "name": "Ramp",
+    "atsType": "ashby",
+    "identifier": "ramp",
+    "website": "https://ramp.com",
+    "careersUrl": "https://ramp.com/careers"
+  }
+]

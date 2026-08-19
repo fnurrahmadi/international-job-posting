@@ -1,0 +1,34 @@
+{
+  "name": "international-job-app",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=20.9"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test --test-isolation=none tests/**/*.test.ts",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "ingest": "tsx scripts/ingest.ts"
+  },
+  "dependencies": {
+    "next": "latest",
+    "postgres": "^3.4.7",
+    "react": "latest",
+    "react-dom": "latest",
+    "zod": "^4.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.30",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "^9.28.0",
+    "eslint-config-next": "latest",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}
