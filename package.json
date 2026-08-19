@@ -16,6 +16,7 @@
     "ingest": "tsx scripts/ingest.ts"
   },
   "dependencies": {
+    "fast-xml-parser": "^5.11.0",
     "next": "latest",
     "postgres": "^3.4.7",
     "react": "latest",

@@ -47,5 +47,26 @@
     "identifier": "bunq",
     "website": "https://www.bunq.com",
     "careersUrl": "https://careers.bunq.com"
+  },
+  {
+    "name": "Parloa",
+    "atsType": "personio",
+    "identifier": "parloa",
+    "website": "https://www.parloa.com",
+    "careersUrl": "https://parloa.jobs.personio.de"
+  },
+  {
+    "name": "QuantCo",
+    "atsType": "personio",
+    "identifier": "quantco",
+    "website": "https://www.quantco.com",
+    "careersUrl": "https://quantco.jobs.personio.de"
+  },
+  {
+    "name": "Raisin",
+    "atsType": "personio",
+    "identifier": "raisin",
+    "website": "https://www.raisin.com",
+    "careersUrl": "https://raisin.jobs.personio.de"
   }
 ]
