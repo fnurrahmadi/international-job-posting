@@ -68,5 +68,12 @@
     "identifier": "raisin",
     "website": "https://www.raisin.com",
     "careersUrl": "https://raisin.jobs.personio.de"
+  },
+  {
+    "name": "Workable network",
+    "atsType": "workable",
+    "identifier": "analytics-search",
+    "website": "https://www.workable.com",
+    "careersUrl": "https://jobs.workable.com"
   }
 ]

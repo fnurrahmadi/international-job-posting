@@ -1,4 +1,4 @@
-export const ATS_TYPES = ["greenhouse", "lever", "ashby", "smartrecruiters", "recruitee", "personio"] as const;
+export const ATS_TYPES = ["greenhouse", "lever", "ashby", "smartrecruiters", "recruitee", "personio", "workable"] as const;
 export type AtsType = (typeof ATS_TYPES)[number];
 
 export const ROLE_FAMILIES = [

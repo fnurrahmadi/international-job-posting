@@ -67,3 +67,11 @@ test("does not promote conditional sponsorship to confirmed support", () => {
   const result = classifySponsorship("Visa sponsorship may be considered for exceptional candidates on a case-by-case basis.");
   assert.equal(result.visaSponsorship, "UNKNOWN");
 });
+
+test("negative support wording overrides embedded positive phrases", () => {
+  const immigration = classifySponsorship("We are unable to provide any immigration related support for this position.");
+  assert.equal(immigration.visaSponsorship, "NO");
+
+  const visas = classifySponsorship("We are not able to sponsor visas for this role.");
+  assert.equal(visas.visaSponsorship, "NO");
+});

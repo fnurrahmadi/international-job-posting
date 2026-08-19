@@ -70,3 +70,12 @@ export async function saveCompanyJobs(company: CompanyConfig, rows: Array<{ job:
     }
   });
 }
+
+export async function closeMissingSourceJobs(source: string, seenIds: string[]) {
+  const sql = getSql();
+  if (seenIds.length > 0) {
+    await sql`UPDATE jobs SET status = 'CLOSED' WHERE source = ${source} AND source_job_id NOT IN ${sql(seenIds)}`;
+  } else {
+    await sql`UPDATE jobs SET status = 'CLOSED' WHERE source = ${source}`;
+  }
+}

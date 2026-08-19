@@ -1,5 +1,5 @@
 import { fetchCompanyJobs } from "@/lib/ats";
-import { finishIngestionRun, saveCompanyJobs, startIngestionRun } from "@/lib/db/repository";
+import { closeMissingSourceJobs, finishIngestionRun, saveCompanyJobs, startIngestionRun } from "@/lib/db/repository";
 import { normalizeJob } from "@/lib/jobs/normalize";
 import { classifyRole, classifySeniority } from "@/lib/jobs/role-classifier";
 import { classifySponsorship } from "@/lib/jobs/sponsorship-classifier";
@@ -39,7 +39,19 @@ export async function runIngestion(companies: CompanyConfig[], concurrency = 4) 
         };
         return [{ job, classification }];
       });
-      await saveCompanyJobs(company, relevant);
+      if (company.atsType === "workable") {
+        const byCompany = new Map<string, typeof relevant>();
+        for (const row of relevant) {
+          const key = `${row.job.company.atsType}:${row.job.company.identifier}`;
+          const group = byCompany.get(key) ?? [];
+          group.push(row);
+          byCompany.set(key, group);
+        }
+        for (const rows of byCompany.values()) await saveCompanyJobs(rows[0].job.company, rows);
+        await closeMissingSourceJobs("workable", relevant.map(({ job }) => job.sourceJobId));
+      } else {
+        await saveCompanyJobs(company, relevant);
+      }
       companiesSucceeded += 1;
       jobsFetched += rawJobs.length;
       jobsRelevant += relevant.length;

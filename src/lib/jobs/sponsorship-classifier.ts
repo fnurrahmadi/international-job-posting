@@ -13,6 +13,8 @@ const VISA_POSITIVE = [
 ];
 const VISA_NEGATIVE = [
   /(?:cannot|can't|unable to|do not|does not|don't|won't|will not) (?:provide |offer )?(?:visa|immigration|work permit|work authorization) sponsorship/i,
+  /(?:cannot|can't|unable to|not able to|won't|will not) sponsor visas?/i,
+  /(?:cannot|can't|unable to|not able to|won't|will not) (?:provide|offer) (?:any )?(?:visa|immigration|work permit|work authorization)(?: related)? (?:support|assistance|services)/i,
   /(?:visa|immigration|work permit|work authorization) sponsorship (?:is |will be )?not (?:available|provided|offered)/i,
   /no (?:current or future )?(?:visa|immigration|work permit|work authorization) sponsorship/i,
   /not eligible for (?:visa|immigration|work permit|work authorization) sponsorship/i,

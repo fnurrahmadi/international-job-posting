@@ -5,6 +5,7 @@ import { fetchLever } from "./lever";
 import { fetchPersonio } from "./personio";
 import { fetchRecruitee } from "./recruitee";
 import { fetchSmartRecruiters } from "./smartrecruiters";
+import { fetchWorkable } from "./workable";
 
 export async function fetchCompanyJobs(company: CompanyConfig): Promise<RawJob[]> {
   switch (company.atsType) {
@@ -14,5 +15,6 @@ export async function fetchCompanyJobs(company: CompanyConfig): Promise<RawJob[]
     case "personio": return fetchPersonio(company);
     case "recruitee": return fetchRecruitee(company);
     case "smartrecruiters": return fetchSmartRecruiters(company);
+    case "workable": return fetchWorkable(company);
   }
 }
