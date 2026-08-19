@@ -40,5 +40,12 @@
     "identifier": "DeliveryHero",
     "website": "https://www.deliveryhero.com",
     "careersUrl": "https://careers.deliveryhero.com"
+  },
+  {
+    "name": "bunq",
+    "atsType": "recruitee",
+    "identifier": "bunq",
+    "website": "https://www.bunq.com",
+    "careersUrl": "https://careers.bunq.com"
   }
 ]

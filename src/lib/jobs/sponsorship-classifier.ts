@@ -16,6 +16,7 @@ const VISA_NEGATIVE = [
   /(?:visa|immigration|work permit|work authorization) sponsorship (?:is |will be )?not (?:available|provided|offered)/i,
   /no (?:current or future )?(?:visa|immigration|work permit|work authorization) sponsorship/i,
   /not eligible for (?:visa|immigration|work permit|work authorization) sponsorship/i,
+  /(?:we|the company|the employer) (?:are |is )?not sponsoring (?:visas?|work permits?|work authorization)/i,
   /applicants? requiring (?:visa|work permit|work authorization) sponsorship (?:cannot|can't|will not|won't) be considered/i,
 ];
 const AUTH_REQUIRED = [
