@@ -144,5 +144,12 @@
     "website": "https://www.mastercard.com",
     "careersUrl": "https://mastercard.wd1.myworkdayjobs.com/en-US/CorporateCareers",
     "feedUrl": "https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers"
+  },
+  {
+    "name": "Wolt",
+    "atsType": "teamtailor",
+    "identifier": "wolt",
+    "website": "https://wolt.com",
+    "careersUrl": "https://careers.wolt.com/en/jobs"
   }
 ]
