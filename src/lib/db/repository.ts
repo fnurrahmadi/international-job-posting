@@ -52,7 +52,7 @@ export async function saveCompanyJobs(company: CompanyConfig, rows: Array<{ job:
         VALUES (${savedJob.id}, ${classification.roleFamily}, ${classification.seniority},
           ${classification.visaSponsorship}, ${classification.relocationSupport},
           ${classification.internationalCandidates}, ${classification.existingWorkAuthorizationRequired},
-          ${classification.confidence}, ${tx.json(classification.evidence)}, 'rules-v1')
+          ${classification.confidence}, ${tx.json(classification.evidence)}, 'rules-v2')
         ON CONFLICT (job_id) DO UPDATE SET role_family = EXCLUDED.role_family,
           seniority = EXCLUDED.seniority, visa_sponsorship = EXCLUDED.visa_sponsorship,
           relocation_support = EXCLUDED.relocation_support,
