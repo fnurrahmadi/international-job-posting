@@ -1,6 +1,6 @@
 # Relocate Jobs
 
-A production-shaped first milestone for discovering analytics jobs and classifying visa sponsorship and relocation signals. It collects public postings from Greenhouse, Lever, and Ashby, normalizes and deduplicates them in PostgreSQL, and exposes recent matches through a Next.js app.
+A production-shaped job discovery service for analytics roles with visa sponsorship and relocation signals. It collects public postings from employer ATS boards and job networks, normalizes and deduplicates them in PostgreSQL, and exposes recent matches through a Next.js app.
 
 ## Architecture
 
@@ -39,6 +39,11 @@ pnpm dev
 Set `DATABASE_URL` in your shell for the CLI commands. Next.js also reads `.env.local` automatically.
 
 Company boards are configured in [`config/companies.json`](config/companies.json). Each record needs an ATS type and the public board identifier.
+
+Current adapters cover Greenhouse, Lever, Ashby, SmartRecruiters, Recruitee, Personio, Workable,
+Workday, Comeet, Breezy, Teamtailor, Pinpoint, Jobvite, Arbeitnow, SAP SuccessFactors, and Oracle
+Recruiting Cloud. Workday, SuccessFactors, and Oracle entries use explicit verified public feed URLs;
+unverified enterprise tenants should remain disabled until their feeds pass `pnpm sources:audit`.
 
 ## Daily ingestion
 

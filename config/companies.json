@@ -151,5 +151,29 @@
     "identifier": "wolt",
     "website": "https://wolt.com",
     "careersUrl": "https://careers.wolt.com/en/jobs"
+  },
+  {
+    "name": "Arbeitnow network",
+    "atsType": "arbeitnow",
+    "identifier": "public-feed",
+    "website": "https://www.arbeitnow.com",
+    "careersUrl": "https://www.arbeitnow.com/jobs",
+    "feedUrl": "https://www.arbeitnow.com/api/job-board-api"
+  },
+  {
+    "name": "SAP",
+    "atsType": "successfactors",
+    "identifier": "sap",
+    "website": "https://www.sap.com",
+    "careersUrl": "https://jobs.sap.com",
+    "feedUrl": "https://jobs.sap.com/services/rss/job/?locale=en_US"
+  },
+  {
+    "name": "Oracle",
+    "atsType": "oracle",
+    "identifier": "CX_45001",
+    "website": "https://www.oracle.com",
+    "careersUrl": "https://careers.oracle.com/en/sites/jobsearch",
+    "feedUrl": "https://eeho.fa.us2.oraclecloud.com/hcmRestApi/resources/latest"
   }
 ]

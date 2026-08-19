@@ -39,7 +39,7 @@ export async function runIngestion(companies: CompanyConfig[], concurrency = 4) 
         };
         return [{ job, classification }];
       });
-      if (company.atsType === "workable") {
+      if (company.atsType === "workable" || company.atsType === "arbeitnow") {
         const byCompany = new Map<string, typeof relevant>();
         for (const row of relevant) {
           const key = `${row.job.company.atsType}:${row.job.company.identifier}`;
@@ -48,7 +48,7 @@ export async function runIngestion(companies: CompanyConfig[], concurrency = 4) 
           byCompany.set(key, group);
         }
         for (const rows of byCompany.values()) await saveCompanyJobs(rows[0].job.company, rows);
-        await closeMissingSourceJobs("workable", relevant.map(({ job }) => job.sourceJobId));
+        await closeMissingSourceJobs(company.atsType, relevant.map(({ job }) => job.sourceJobId));
       } else {
         await saveCompanyJobs(company, relevant);
       }

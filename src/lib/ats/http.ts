@@ -19,8 +19,8 @@ async function fetchResponse(url: string, attempts: number, accept: string, init
   throw lastError;
 }
 
-export async function fetchJson(url: string, attempts = 3): Promise<unknown> {
-  return (await fetchResponse(url, attempts, "application/json")).json();
+export async function fetchJson(url: string, attempts = 3, init: RequestInit = {}): Promise<unknown> {
+  return (await fetchResponse(url, attempts, "application/json", init)).json();
 }
 
 export async function fetchText(url: string, attempts = 3, accept = "text/plain"): Promise<string> {
