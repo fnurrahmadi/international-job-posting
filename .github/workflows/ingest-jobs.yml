@@ -2,6 +2,16 @@ name: Ingest jobs
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "config/companies.json"
+      - "scripts/**"
+      - "sql/**"
+      - "src/lib/ats/**"
+      - "src/lib/ingestion/**"
+      - "src/lib/jobs/**"
+      - ".github/workflows/ingest-jobs.yml"
   schedule:
     - cron: "17 19 * * *"
 
