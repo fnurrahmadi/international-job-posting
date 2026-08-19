@@ -75,5 +75,47 @@
     "identifier": "analytics-search",
     "website": "https://www.workable.com",
     "careersUrl": "https://jobs.workable.com"
+  },
+  {
+    "name": "Notion",
+    "atsType": "ashby",
+    "identifier": "notion",
+    "website": "https://www.notion.com",
+    "careersUrl": "https://www.notion.com/careers"
+  },
+  {
+    "name": "ElevenLabs",
+    "atsType": "ashby",
+    "identifier": "elevenlabs",
+    "website": "https://elevenlabs.io",
+    "careersUrl": "https://elevenlabs.io/careers"
+  },
+  {
+    "name": "Wayve",
+    "atsType": "ashby",
+    "identifier": "wayve",
+    "website": "https://wayve.ai",
+    "careersUrl": "https://wayve.ai/careers"
+  },
+  {
+    "name": "Perplexity",
+    "atsType": "ashby",
+    "identifier": "perplexity",
+    "website": "https://www.perplexity.ai",
+    "careersUrl": "https://www.perplexity.ai/careers"
+  },
+  {
+    "name": "Datadog",
+    "atsType": "greenhouse",
+    "identifier": "datadog",
+    "website": "https://www.datadoghq.com",
+    "careersUrl": "https://careers.datadoghq.com"
+  },
+  {
+    "name": "SumUp",
+    "atsType": "greenhouse",
+    "identifier": "sumup",
+    "website": "https://www.sumup.com",
+    "careersUrl": "https://www.sumup.com/careers"
   }
 ]
