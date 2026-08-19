@@ -120,5 +120,29 @@
     "identifier": "sumup",
     "website": "https://www.sumup.com",
     "careersUrl": "https://www.sumup.com/careers"
+  },
+  {
+    "name": "Adobe",
+    "atsType": "workday",
+    "identifier": "adobe",
+    "website": "https://www.adobe.com",
+    "careersUrl": "https://adobe.wd5.myworkdayjobs.com/en-US/external_experienced",
+    "feedUrl": "https://adobe.wd5.myworkdayjobs.com/wday/cxs/adobe/external_experienced"
+  },
+  {
+    "name": "Autodesk",
+    "atsType": "workday",
+    "identifier": "autodesk",
+    "website": "https://www.autodesk.com",
+    "careersUrl": "https://autodesk.wd1.myworkdayjobs.com/en-US/Ext",
+    "feedUrl": "https://autodesk.wd1.myworkdayjobs.com/wday/cxs/autodesk/Ext"
+  },
+  {
+    "name": "Mastercard",
+    "atsType": "workday",
+    "identifier": "mastercard",
+    "website": "https://www.mastercard.com",
+    "careersUrl": "https://mastercard.wd1.myworkdayjobs.com/en-US/CorporateCareers",
+    "feedUrl": "https://mastercard.wd1.myworkdayjobs.com/wday/cxs/mastercard/CorporateCareers"
   }
 ]

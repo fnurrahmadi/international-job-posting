@@ -1,4 +1,4 @@
-export const ATS_TYPES = ["greenhouse", "lever", "ashby", "smartrecruiters", "recruitee", "personio", "workable"] as const;
+export const ATS_TYPES = ["greenhouse", "lever", "ashby", "smartrecruiters", "recruitee", "personio", "workable", "workday"] as const;
 export type AtsType = (typeof ATS_TYPES)[number];
 
 export const ROLE_FAMILIES = [
@@ -16,6 +16,7 @@ export interface CompanyConfig {
   identifier: string;
   website?: string;
   careersUrl?: string;
+  feedUrl?: string;
   enabled?: boolean;
 }
 

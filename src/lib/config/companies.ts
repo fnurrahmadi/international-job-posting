@@ -9,6 +9,7 @@ const companySchema = z.object({
   identifier: z.string().min(1),
   website: z.string().url().optional(),
   careersUrl: z.string().url().optional(),
+  feedUrl: z.string().url().optional(),
   enabled: z.boolean().optional(),
 });
 
