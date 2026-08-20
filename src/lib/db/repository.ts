@@ -19,6 +19,17 @@ export async function finishIngestionRun(runId: string, result: {
     jobs_relevant = ${result.jobsRelevant}, error_summary = ${sql.json(result.errors)} WHERE id = ${runId}`;
 }
 
+export async function saveSourceResult(runId: string, result: {
+  sourceName: string; atsType: string; jobsFetched: number; jobsRelevant: number;
+  supportedJobs: number; durationMs: number; errorMessage?: string;
+}) {
+  const sql = getSql();
+  await sql`INSERT INTO ingestion_source_results
+    (run_id, source_name, ats_type, jobs_fetched, jobs_relevant, supported_jobs, duration_ms, error_message)
+    VALUES (${runId}, ${result.sourceName}, ${result.atsType}, ${result.jobsFetched},
+      ${result.jobsRelevant}, ${result.supportedJobs}, ${result.durationMs}, ${result.errorMessage ?? null})`;
+}
+
 export async function saveCompanyJobs(company: CompanyConfig, rows: Array<{ job: NormalizedJob; classification: JobClassification }>) {
   const sql = getSql();
   await sql.begin(async (tx) => {

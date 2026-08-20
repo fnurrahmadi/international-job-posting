@@ -21,6 +21,7 @@ The web process and ingestion process are separate. The ingestion CLI can run in
 - **Web:** Vercel Hobby for a personal, non-commercial deployment.
 - **Database:** Neon Free PostgreSQL. Use its pooled connection string as `DATABASE_URL`.
 - **Scheduler:** GitHub Actions. Public repositories receive free standard hosted-runner usage; private repositories receive an included monthly allowance.
+- **Email alerts:** Resend Free. A verified sending domain is required before sending to arbitrary subscribers.
 
 Free tiers have usage and fair-use limits. The code is provider-neutral: any PostgreSQL host and any Node.js scheduler can replace these services.
 
@@ -48,7 +49,7 @@ unverified enterprise tenants should remain disabled until their feeds pass `pnp
 
 ## Daily ingestion
 
-The workflow in `.github/workflows/ingest-jobs.yml` runs daily at approximately 02:17 Asia/Bangkok (19:17 UTC) and can also be started manually. Add a repository Actions secret named `DATABASE_URL` before enabling it.
+The workflow in `.github/workflows/ingest-jobs.yml` runs daily at approximately 02:17 Asia/Bangkok (19:17 UTC) and can also be started manually. Add a repository Actions secret named `DATABASE_URL` before enabling it. To enable saved-search emails, also add Actions secrets `RESEND_API_KEY` and `ALERT_FROM_EMAIL`, plus an Actions variable `APP_BASE_URL` containing the production URL. Without the email secrets, the alert step exits successfully without sending.
 
 Every successful company fetch is authoritative for that company: unseen postings are marked closed. A failed fetch never closes that company's existing jobs. Upserts make reruns safe.
 
@@ -65,4 +66,5 @@ pnpm test
 pnpm typecheck
 pnpm lint
 pnpm build
+pnpm alerts:send
 ```

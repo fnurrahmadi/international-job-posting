@@ -39,7 +39,7 @@
     "atsType": "smartrecruiters",
     "identifier": "DeliveryHero",
     "website": "https://www.deliveryhero.com",
-    "careersUrl": "https://careers.deliveryhero.com"
+    "careersUrl": "https://careers.deliveryhero.com/jobs?options=252&page=1"
   },
   {
     "name": "bunq",
@@ -189,5 +189,12 @@
     "identifier": "wise",
     "website": "https://wise.com",
     "careersUrl": "https://wise.jobs/jobs"
+  },
+  {
+    "name": "Foodpanda",
+    "atsType": "attrax",
+    "identifier": "foodpanda",
+    "website": "https://www.foodpanda.com",
+    "careersUrl": "https://careers.foodpanda.com/jobs/"
   }
 ]

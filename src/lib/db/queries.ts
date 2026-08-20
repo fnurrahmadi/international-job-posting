@@ -28,17 +28,53 @@ export async function getRecentJobs(limit: number, supportFilter: SupportFilter 
 
   return sql<Array<{
     id: string; title: string; company: string; location: string; url: string;
-    roleFamily: string; visaSponsorship: string; relocationSupport: string;
+    roleFamily: string; visaSponsorship: string; relocationSupport: string; evidence: string[];
   }>>`
-    SELECT j.id::text, j.title, co.name AS company, j.location, j.url,
-      c.role_family AS "roleFamily", c.visa_sponsorship AS "visaSponsorship",
-      c.relocation_support AS "relocationSupport"
+    WITH ranked AS (
+      SELECT j.id, j.title, j.location, j.url, j.posted_at, j.first_seen_at, co.name AS company,
+        c.role_family, c.visa_sponsorship, c.relocation_support, c.evidence,
+        ROW_NUMBER() OVER (
+          PARTITION BY LOWER(co.name), LOWER(REGEXP_REPLACE(j.title, '[^a-zA-Z0-9]+', '', 'g')),
+            LOWER(COALESCE(j.location, ''))
+          ORDER BY j.last_seen_at DESC, j.id DESC
+        ) AS duplicate_rank
+      FROM jobs j
+      JOIN companies co ON co.id = j.company_id
+      JOIN job_classifications c ON c.job_id = j.id
+      WHERE j.status = 'ACTIVE'
+      ${supportPredicate}
+    )
+    SELECT id::text, title, company, location, url, role_family AS "roleFamily",
+      visa_sponsorship AS "visaSponsorship", relocation_support AS "relocationSupport", evidence
+    FROM ranked
+    WHERE duplicate_rank = 1
+    ORDER BY COALESCE(posted_at, first_seen_at) DESC
+    LIMIT ${Math.min(Math.max(limit, 1), 100)}
+  `;
+}
+
+export async function getJobById(id: string) {
+  const sql = getSql();
+  const [job] = await sql<Array<{
+    id: string; title: string; company: string; companyWebsite: string | null; location: string;
+    countryCode: string | null; remoteType: string; url: string; descriptionText: string;
+    postedAt: Date | null; firstSeenAt: Date; lastSeenAt: Date; status: string; roleFamily: string;
+    seniority: string; visaSponsorship: string; relocationSupport: string;
+    internationalCandidates: string; existingWorkAuthorizationRequired: string;
+    confidence: number; evidence: string[];
+  }>>`
+    SELECT j.id::text, j.title, co.name AS company, co.website AS "companyWebsite",
+      j.location, j.country_code AS "countryCode", j.remote_type AS "remoteType", j.url,
+      j.description_text AS "descriptionText", j.posted_at AS "postedAt",
+      j.first_seen_at AS "firstSeenAt", j.last_seen_at AS "lastSeenAt", j.status,
+      c.role_family AS "roleFamily", c.seniority, c.visa_sponsorship AS "visaSponsorship",
+      c.relocation_support AS "relocationSupport", c.international_candidates AS "internationalCandidates",
+      c.existing_work_authorization_required AS "existingWorkAuthorizationRequired",
+      c.confidence, c.evidence
     FROM jobs j
     JOIN companies co ON co.id = j.company_id
     JOIN job_classifications c ON c.job_id = j.id
-    WHERE j.status = 'ACTIVE'
-    ${supportPredicate}
-    ORDER BY COALESCE(j.posted_at, j.first_seen_at) DESC
-    LIMIT ${Math.min(Math.max(limit, 1), 100)}
+    WHERE j.id = ${id}
   `;
+  return job ?? null;
 }

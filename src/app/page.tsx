@@ -1,4 +1,6 @@
 import { getDashboardStats, getRecentJobs, type SupportFilter } from "@/lib/db/queries";
+import Link from "next/link";
+import { AlertForm } from "@/components/alert-form";
 
 export const dynamic = "force-dynamic";
 
@@ -60,21 +62,29 @@ export default async function Home({
         ) : (
           <div className="job-list">
             {jobs.map((job) => (
-              <a className="job" href={job.url} key={job.id} target="_blank" rel="noreferrer">
+              <Link className="job" href={`/jobs/${job.id}`} key={job.id}>
                 <div>
                   <h3>{job.title}</h3>
                   <p>{job.company} · {job.location || "Location not specified"}</p>
+                  {job.evidence[0] ? <p className="evidence-preview">“{job.evidence[0]}”</p> : null}
                 </div>
                 <div className="signals">
                   <span>{job.roleFamily.replaceAll("_", " ")}</span>
                   <span data-signal={job.visaSponsorship.toLowerCase()}>Visa: {job.visaSponsorship}</span>
                   <span data-signal={job.relocationSupport.toLowerCase()}>Relocation: {job.relocationSupport}</span>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         )}
       </section>
+
+      {configured && supportFilter !== "all" ? (
+        <section className="alerts">
+          <div><p className="eyebrow">Daily alerts</p><h2>Save this search</h2><p className="muted">Get only newly discovered matches for the current support filter.</p></div>
+          <AlertForm supportFilter={supportFilter} />
+        </section>
+      ) : null}
     </main>
   );
 }

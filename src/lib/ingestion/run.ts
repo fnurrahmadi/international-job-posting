@@ -1,5 +1,5 @@
 import { fetchCompanyJobs } from "@/lib/ats";
-import { closeMissingSourceJobs, finishIngestionRun, saveCompanyJobs, startIngestionRun } from "@/lib/db/repository";
+import { closeMissingSourceJobs, finishIngestionRun, saveCompanyJobs, saveSourceResult, startIngestionRun } from "@/lib/db/repository";
 import { normalizeJob } from "@/lib/jobs/normalize";
 import { classifyRole, classifySeniority } from "@/lib/jobs/role-classifier";
 import { classifySponsorship } from "@/lib/jobs/sponsorship-classifier";
@@ -24,6 +24,7 @@ export async function runIngestion(companies: CompanyConfig[], concurrency = 4) 
   let jobsRelevant = 0;
 
   await mapLimit(companies, Math.max(1, Math.min(concurrency, 10)), async (company) => {
+    const startedAt = Date.now();
     try {
       const rawJobs = await fetchCompanyJobs(company);
       const relevant = rawJobs.flatMap((raw) => {
@@ -55,10 +56,23 @@ export async function runIngestion(companies: CompanyConfig[], concurrency = 4) 
       companiesSucceeded += 1;
       jobsFetched += rawJobs.length;
       jobsRelevant += relevant.length;
+      await saveSourceResult(runId, {
+        sourceName: company.name,
+        atsType: company.atsType,
+        jobsFetched: rawJobs.length,
+        jobsRelevant: relevant.length,
+        supportedJobs: relevant.filter(({ classification }) =>
+          classification.visaSponsorship === "YES" || classification.relocationSupport === "YES").length,
+        durationMs: Date.now() - startedAt,
+      });
       console.log(`${company.name}: fetched ${rawJobs.length}, retained ${relevant.length}`);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       errors.push({ company: company.name, error: message });
+      await saveSourceResult(runId, {
+        sourceName: company.name, atsType: company.atsType, jobsFetched: 0, jobsRelevant: 0,
+        supportedJobs: 0, durationMs: Date.now() - startedAt, errorMessage: message,
+      });
       console.error(`${company.name}: ${message}`);
     }
   });

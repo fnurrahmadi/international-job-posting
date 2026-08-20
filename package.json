@@ -14,6 +14,7 @@
     "test": "node --import tsx --test --test-isolation=none tests/**/*.test.ts",
     "db:migrate": "tsx scripts/migrate.ts",
     "ingest": "tsx scripts/ingest.ts",
+    "alerts:send": "tsx scripts/send-alerts.ts",
     "sources:audit": "tsx scripts/audit-sources.ts",
     "workday:discover": "tsx scripts/discover-workday.ts"
   },
