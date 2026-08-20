@@ -75,3 +75,32 @@ test("negative support wording overrides embedded positive phrases", () => {
   const visas = classifySponsorship("We are not able to sponsor visas for this role.");
   assert.equal(visas.visaSponsorship, "NO");
 });
+
+test("detects broader immigration benefits without promoting conditional wording", () => {
+  assert.equal(classifySponsorship("The company will arrange your work permit.").visaSponsorship, "YES");
+  assert.equal(classifySponsorship("Employer-provided immigration counsel will guide successful applicants.").visaSponsorship, "YES");
+  assert.equal(classifySponsorship("Visa application costs will be covered.").visaSponsorship, "YES");
+  assert.equal(classifySponsorship("Immigration counsel may be provided depending on location.").visaSponsorship, "UNKNOWN");
+});
+
+test("detects relocation package components only with move context", () => {
+  assert.equal(classifySponsorship("Temporary accommodation is provided as part of your relocation.").relocationSupport, "YES");
+  assert.equal(classifySponsorship("Household goods shipping costs will be covered.").relocationSupport, "YES");
+  assert.equal(classifySponsorship("Family relocation assistance is included.").relocationSupport, "YES");
+  assert.equal(classifySponsorship("Business travel and hotels are reimbursed.").relocationSupport, "UNKNOWN");
+});
+
+test("role-specific exclusions override generic benefits", () => {
+  const result = classifySponsorship("Our global benefits include relocation support. However, relocation is not available for this role.");
+  assert.equal(result.relocationSupport, "NO");
+});
+
+test("screening questions are not treated as support evidence", () => {
+  const questionOnly = classifySponsorship("Do you require visa and relocation assistance?");
+  assert.equal(questionOnly.visaSponsorship, "UNKNOWN");
+  assert.equal(questionOnly.relocationSupport, "UNKNOWN");
+  assert.deepEqual(questionOnly.evidence, []);
+
+  const followedByOffer = classifySponsorship("Will you require visa sponsorship? Visa sponsorship is available for this role.");
+  assert.equal(followedByOffer.visaSponsorship, "YES");
+});

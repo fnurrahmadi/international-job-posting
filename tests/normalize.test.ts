@@ -11,3 +11,11 @@ test("creates stable hashes", () => {
   assert.equal(normalizeJob(raw).contentHash, normalizeJob(raw).contentHash);
   assert.equal(normalizeJob(raw).remoteType, "REMOTE");
 });
+
+test("adds country and remote eligibility metadata", () => {
+  const raw = { source: "ashby" as const, sourceJobId: "2", company: { name: "A", atsType: "ashby" as const, identifier: "a" }, title: "Data Analyst", descriptionHtml: "<p>This role is remote within Germany or France.</p>", location: "Berlin, Germany", url: "https://example.com/job/2", postedAt: null, metadata: {} };
+  const job = normalizeJob(raw);
+  assert.equal(job.countryCode, "DE");
+  assert.equal(job.remoteType, "REMOTE");
+  assert.deepEqual(job.metadata.eligibleCountryCodes, ["DE", "FR"]);
+});

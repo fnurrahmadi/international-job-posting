@@ -54,7 +54,7 @@ Every successful company fetch is authoritative for that company: unseen posting
 
 ## Classification behavior
 
-Only target analytics role families are stored. Visa and relocation fields use `YES`, `NO`, or `UNKNOWN`; missing language is never interpreted as a negative. Negative work-authorization language takes precedence over a generic sponsorship mention.
+Only target analytics role families are stored. Visa and relocation fields use `YES`, `NO`, or `UNKNOWN`; missing or conditional language is never interpreted as confirmed support. Role-specific negative work-authorization or relocation language takes precedence over generic benefits, and application screening questions are not treated as offers of support. Normalization also records inferred posting countries and explicitly stated eligible countries without relying on a paid geocoding service.
 
 This milestone uses deterministic rules so ingestion remains free and auditable. A later classifier can add an LLM fallback only for `UNKNOWN` records without changing the schema.
 
