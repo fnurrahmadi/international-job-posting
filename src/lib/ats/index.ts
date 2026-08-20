@@ -15,6 +15,8 @@ import { fetchWorkday } from "./workday";
 import { fetchArbeitnow } from "./arbeitnow";
 import { fetchOracle } from "./oracle";
 import { fetchSuccessFactors } from "./successfactors";
+import { fetchBolt } from "./bolt";
+import { fetchAttrax } from "./attrax";
 
 export async function fetchCompanyJobs(company: CompanyConfig): Promise<RawJob[]> {
   switch (company.atsType) {
@@ -34,5 +36,7 @@ export async function fetchCompanyJobs(company: CompanyConfig): Promise<RawJob[]
     case "arbeitnow": return fetchArbeitnow(company);
     case "successfactors": return fetchSuccessFactors(company);
     case "oracle": return fetchOracle(company);
+    case "bolt": return fetchBolt(company);
+    case "attrax": return fetchAttrax(company);
   }
 }

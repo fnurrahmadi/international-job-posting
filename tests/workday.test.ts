@@ -29,6 +29,7 @@ test("fetchWorkday filters summaries before fetching details", async (t) => {
       return Response.json({ total: 2, jobPostings: [
         { title: "Senior Data Analyst", externalPath: "/job/Berlin/Senior-Data-Analyst_R1", locationsText: "Berlin" },
         { title: "Software Engineer", externalPath: "/job/Berlin/Software-Engineer_R2", locationsText: "Berlin" },
+        { bulletFields: ["malformed placeholder"] },
       ] });
     }
     if (url.endsWith("/job/Berlin/Senior-Data-Analyst_R1")) {

@@ -17,9 +17,14 @@ const summarySchema = z.object({
   postedOn: z.string().nullish(),
 }).passthrough();
 
+const summaryListSchema = z.array(z.unknown()).transform((items) => items.flatMap((item) => {
+  const result = summarySchema.safeParse(item);
+  return result.success ? [result.data] : [];
+}));
+
 const searchSchema = z.object({
   total: z.number(),
-  jobPostings: z.array(summarySchema).default([]),
+  jobPostings: summaryListSchema.default([]),
 }).passthrough();
 
 const detailSchema = z.object({

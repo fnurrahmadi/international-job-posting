@@ -42,7 +42,8 @@ Company boards are configured in [`config/companies.json`](config/companies.json
 
 Current adapters cover Greenhouse, Lever, Ashby, SmartRecruiters, Recruitee, Personio, Workable,
 Workday, Comeet, Breezy, Teamtailor, Pinpoint, Jobvite, Arbeitnow, SAP SuccessFactors, and Oracle
-Recruiting Cloud. Workday, SuccessFactors, and Oracle entries use explicit verified public feed URLs;
+Recruiting Cloud, plus Bolt's careers platform and Attrax-powered sites such as Wise. Workday,
+SuccessFactors, and Oracle entries use explicit verified public feed URLs;
 unverified enterprise tenants should remain disabled until their feeds pass `pnpm sources:audit`.
 
 ## Daily ingestion

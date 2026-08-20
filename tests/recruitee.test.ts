@@ -21,7 +21,7 @@ test("fetchRecruitee preserves application questions used for sponsorship classi
       id: 42,
       title: "Senior Data Analyst",
       description: "<p>Build analytics products.</p>",
-      requirements: "<p>Advanced SQL.</p>",
+      requirements: null,
       careers_url: "https://example.recruitee.com/o/senior-data-analyst",
       published_at: "2026-08-01 10:00:00 UTC",
       location: "Amsterdam, Netherlands",

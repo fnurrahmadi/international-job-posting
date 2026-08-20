@@ -175,5 +175,19 @@
     "website": "https://www.oracle.com",
     "careersUrl": "https://careers.oracle.com/en/sites/jobsearch",
     "feedUrl": "https://eeho.fa.us2.oraclecloud.com/hcmRestApi/resources/latest"
+  },
+  {
+    "name": "Bolt",
+    "atsType": "bolt",
+    "identifier": "bolt",
+    "website": "https://bolt.eu",
+    "careersUrl": "https://bolt.eu/en/careers/positions/"
+  },
+  {
+    "name": "Wise",
+    "atsType": "attrax",
+    "identifier": "wise",
+    "website": "https://wise.com",
+    "careersUrl": "https://wise.jobs/jobs"
   }
 ]

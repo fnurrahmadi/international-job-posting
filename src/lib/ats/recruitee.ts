@@ -18,8 +18,8 @@ const openQuestionSchema = z.object({
 const offerSchema = z.object({
   id: z.union([z.string(), z.number()]),
   title: z.string(),
-  description: z.string().default(""),
-  requirements: z.string().default(""),
+  description: z.string().nullish().transform((value) => value ?? ""),
+  requirements: z.string().nullish().transform((value) => value ?? ""),
   careers_url: z.string().url(),
   published_at: z.string().nullish(),
   created_at: z.string().nullish(),
