@@ -6,7 +6,7 @@ export const runtime = "nodejs";
 
 const alertSchema = z.object({
   email: z.email(),
-  supportFilter: z.enum(["supported", "visa", "relocation"]).default("supported"),
+  supportFilter: z.enum(["supported", "visa", "relocation", "possible"]).default("supported"),
   countryCode: z.string().trim().regex(/^[A-Za-z]{2}$/).optional().or(z.literal("")),
   company: z.string().max(0).optional(),
 });

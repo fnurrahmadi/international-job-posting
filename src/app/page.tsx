@@ -4,7 +4,7 @@ import { AlertForm } from "@/components/alert-form";
 
 export const dynamic = "force-dynamic";
 
-const SUPPORT_FILTERS = new Set<SupportFilter>(["supported", "visa", "relocation", "all"]);
+const SUPPORT_FILTERS = new Set<SupportFilter>(["supported", "visa", "relocation", "possible", "all"]);
 
 export default async function Home({
   searchParams,
@@ -48,6 +48,7 @@ export default async function Home({
                 <option value="supported">Visa or relocation supported</option>
                 <option value="visa">Visa supported</option>
                 <option value="relocation">Relocation supported</option>
+                <option value="possible">Possible international opportunities</option>
                 <option value="all">All jobs, including unknown</option>
               </select>
               <button type="submit">Apply</button>
@@ -70,6 +71,7 @@ export default async function Home({
                 </div>
                 <div className="signals">
                   <span className="score">Support score: {job.supportScore}</span>
+                  {job.possibleSupport ? <span data-signal="possible">Possible opportunity</span> : null}
                   <span>{job.roleFamily.replaceAll("_", " ")}</span>
                   <span data-signal={job.visaSponsorship.toLowerCase()}>Visa: {job.visaSponsorship}</span>
                   <span data-signal={job.relocationSupport.toLowerCase()}>Relocation: {job.relocationSupport}</span>

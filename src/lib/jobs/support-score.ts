@@ -6,6 +6,7 @@ export interface SupportScoreBreakdown {
   international: number;
   authorization: number;
   evidence: number;
+  possible: number;
   total: number;
 }
 
@@ -15,5 +16,6 @@ export function calculateSupportScore(classification: Omit<JobClassification, "s
   const international = classification.internationalCandidates === "YES" ? 10 : 0;
   const authorization = classification.existingWorkAuthorizationRequired === "YES" ? -25 : 10;
   const evidence = Math.min(10, classification.evidence.length * 2);
-  return { visa, relocation, international, authorization, evidence, total: Math.max(0, Math.min(100, visa + relocation + international + authorization + evidence)) };
+  const possible = classification.possibleSupport ? 8 : 0;
+  return { visa, relocation, international, authorization, evidence, possible, total: Math.max(0, Math.min(100, visa + relocation + international + authorization + evidence + possible)) };
 }

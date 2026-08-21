@@ -90,6 +90,13 @@ const INTERNATIONAL_POSITIVE = [
   /open to (?:applicants|candidates) (?:based )?(?:outside|overseas|worldwide|globally)/i,
   /(?:international|global) relocation/i,
 ];
+const POSSIBLE_SUPPORT = [
+  /(?:all )?qualified applicants? (?:are |will be )?considered.*without regard to.*nationality/i,
+  /equal opportunity employer.*without regard to.*nationality/i,
+  /(?:applications?|applicants?|candidates?) (?:of|from) all nationalities (?:are )?(?:welcome|considered|accepted)/i,
+  /(?:regardless|irrespective) of (?:their |your )?nationality/i,
+  /no discrimination (?:on the basis of|based on).*(?:nationality|citizenship)/i,
+];
 
 const CONDITIONAL = /\b(?:may|might|could|potentially|case[- ]by[- ]case|depending on|subject to|where possible|where applicable|at (?:our|the company's) discretion|for exceptional candidates?)\b/i;
 const SCREENING_QUESTION = /(?:\?|^(?:do|does|will|would|are|can|have) you\b).*(?:visa|sponsor|immigration|work permit|work authorization|right to work|relocat)/i;
@@ -121,6 +128,9 @@ export function classifySponsorship(text: string) {
   const visaSponsorship = authRequired ? "NO" : signal(segments, VISA_POSITIVE, VISA_NEGATIVE);
   const relocationSupport = signal(segments, RELOCATION_POSITIVE, RELOCATION_NEGATIVE);
   const internationalCandidates = signal(segments, INTERNATIONAL_POSITIVE, [...AUTH_REQUIRED, ...VISA_NEGATIVE]);
+  const possibleEvidence = visaSponsorship === "UNKNOWN" && relocationSupport === "UNKNOWN" && !authRequired
+    ? evidenceFor(segments, POSSIBLE_SUPPORT)
+    : [];
   const allPatterns = [...VISA_POSITIVE, ...VISA_NEGATIVE, ...AUTH_REQUIRED, ...RELOCATION_POSITIVE, ...RELOCATION_NEGATIVE, ...INTERNATIONAL_POSITIVE];
   const evidence = evidenceFor(segments, allPatterns);
 
@@ -130,6 +140,8 @@ export function classifySponsorship(text: string) {
     internationalCandidates,
     existingWorkAuthorizationRequired: authRequired ? "YES" as const : "UNKNOWN" as const,
     evidence,
+    possibleSupport: possibleEvidence.length > 0,
+    possibleEvidence,
     confidence: evidence.length ? 0.9 : 0.5,
   };
 }

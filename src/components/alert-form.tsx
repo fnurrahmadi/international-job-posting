@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 
-export function AlertForm({ supportFilter }: { supportFilter: "supported" | "visa" | "relocation" }) {
+export function AlertForm({ supportFilter }: { supportFilter: "supported" | "visa" | "relocation" | "possible" }) {
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
   async function submit(event: FormEvent<HTMLFormElement>) {

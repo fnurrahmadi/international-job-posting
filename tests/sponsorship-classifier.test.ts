@@ -112,3 +112,15 @@ test("detects country-specific employer sponsorship programs", () => {
   assert.equal(classifySponsorship("LMIA support is provided for the successful candidate.").visaSponsorship, "YES");
   assert.equal(classifySponsorship("We mention the EU Blue Card, but support may be considered case-by-case.").visaSponsorship, "UNKNOWN");
 });
+
+test("marks nationality-inclusive wording as possible without claiming support", () => {
+  const result = classifySponsorship("All qualified applicants are considered for employment without regard to race, colour, nationality, religion, gender, age, or disability.");
+  assert.equal(result.visaSponsorship, "UNKNOWN");
+  assert.equal(result.relocationSupport, "UNKNOWN");
+  assert.equal(result.possibleSupport, true);
+  assert.equal(result.possibleEvidence.length, 1);
+
+  const restricted = classifySponsorship("Applicants are considered without regard to nationality. You must already have the right to work in Estonia.");
+  assert.equal(restricted.possibleSupport, false);
+  assert.equal(restricted.visaSponsorship, "NO");
+});

@@ -45,6 +45,7 @@ export async function getPendingAlerts() {
       AND CASE s.support_filter
         WHEN 'VISA' THEN c.visa_sponsorship = 'YES'
         WHEN 'RELOCATION' THEN c.relocation_support = 'YES'
+        WHEN 'POSSIBLE' THEN c.possible_support = TRUE AND c.visa_sponsorship = 'UNKNOWN' AND c.relocation_support = 'UNKNOWN'
         ELSE c.visa_sponsorship = 'YES' OR c.relocation_support = 'YES'
       END
     LEFT JOIN alert_deliveries d ON d.saved_search_id = s.id AND d.job_id = j.id

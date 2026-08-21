@@ -25,9 +25,10 @@ export default async function JobPage({ params }: { params: Promise<{ id: string
       </header>
       <section className="detail-grid">
         <article className="detail-card"><h2>Support assessment</h2>
-          <div className="signals detail-signals"><span className="score">Support score: {job.supportScore}</span><span data-signal={job.visaSponsorship.toLowerCase()}>Visa: {job.visaSponsorship}</span><span data-signal={job.relocationSupport.toLowerCase()}>Relocation: {job.relocationSupport}</span><span>Confidence: {Math.round(job.confidence * 100)}%</span></div>
+          <div className="signals detail-signals"><span className="score">Support score: {job.supportScore}</span>{job.possibleSupport ? <span data-signal="possible">Possible international opportunity</span> : null}<span data-signal={job.visaSponsorship.toLowerCase()}>Visa: {job.visaSponsorship}</span><span data-signal={job.relocationSupport.toLowerCase()}>Relocation: {job.relocationSupport}</span><span>Confidence: {Math.round(job.confidence * 100)}%</span></div>
           <h3>Evidence from the listing</h3>
           {job.evidence.length ? <ul>{job.evidence.map((item) => <li key={item}>{item}</li>)}</ul> : <p className="muted">No explicit support wording was found.</p>}
+          {job.possibleEvidence.length ? <><h3>Why this is marked possible</h3><ul>{job.possibleEvidence.map((item) => <li key={item}>{item}</li>)}</ul></> : null}
         </article>
         <aside className="detail-card facts"><h2>Job facts</h2><dl>
           <div><dt>Role family</dt><dd>{job.roleFamily.replaceAll("_", " ")}</dd></div>
