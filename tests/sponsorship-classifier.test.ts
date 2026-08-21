@@ -104,3 +104,11 @@ test("screening questions are not treated as support evidence", () => {
   const followedByOffer = classifySponsorship("Will you require visa sponsorship? Visa sponsorship is available for this role.");
   assert.equal(followedByOffer.visaSponsorship, "YES");
 });
+
+test("detects country-specific employer sponsorship programs", () => {
+  assert.equal(classifySponsorship("A Certificate of Sponsorship will be assigned under the Skilled Worker route.").visaSponsorship, "YES");
+  assert.equal(classifySponsorship("We are an IND recognised sponsor and support highly skilled migrant applications.").visaSponsorship, "YES");
+  assert.equal(classifySponsorship("Your Employment Pass application will be submitted by the company.").visaSponsorship, "YES");
+  assert.equal(classifySponsorship("LMIA support is provided for the successful candidate.").visaSponsorship, "YES");
+  assert.equal(classifySponsorship("We mention the EU Blue Card, but support may be considered case-by-case.").visaSponsorship, "UNKNOWN");
+});

@@ -52,4 +52,5 @@ export interface JobClassification {
   existingWorkAuthorizationRequired: TernarySignal;
   confidence: number;
   evidence: string[];
+  supportScore: number;
 }

@@ -59,18 +59,18 @@ export async function saveCompanyJobs(company: CompanyConfig, rows: Array<{ job:
       await tx`
         INSERT INTO job_classifications (job_id, role_family, seniority, visa_sponsorship,
           relocation_support, international_candidates, existing_work_authorization_required,
-          confidence, evidence, classifier_version)
+          confidence, evidence, classifier_version, support_score)
         VALUES (${savedJob.id}, ${classification.roleFamily}, ${classification.seniority},
           ${classification.visaSponsorship}, ${classification.relocationSupport},
           ${classification.internationalCandidates}, ${classification.existingWorkAuthorizationRequired},
-          ${classification.confidence}, ${tx.json(classification.evidence)}, 'rules-v3')
+          ${classification.confidence}, ${tx.json(classification.evidence)}, 'rules-v4', ${classification.supportScore})
         ON CONFLICT (job_id) DO UPDATE SET role_family = EXCLUDED.role_family,
           seniority = EXCLUDED.seniority, visa_sponsorship = EXCLUDED.visa_sponsorship,
           relocation_support = EXCLUDED.relocation_support,
           international_candidates = EXCLUDED.international_candidates,
           existing_work_authorization_required = EXCLUDED.existing_work_authorization_required,
           confidence = EXCLUDED.confidence, evidence = EXCLUDED.evidence,
-          classifier_version = EXCLUDED.classifier_version, classified_at = NOW()
+          classifier_version = EXCLUDED.classifier_version, support_score = EXCLUDED.support_score, classified_at = NOW()
       `;
     }
     if (seenIds.length > 0) {

@@ -15,7 +15,9 @@
     "db:migrate": "tsx scripts/migrate.ts",
     "ingest": "tsx scripts/ingest.ts",
     "alerts:send": "tsx scripts/send-alerts.ts",
+    "jobs:check-links": "tsx scripts/check-job-links.ts",
     "sources:audit": "tsx scripts/audit-sources.ts",
+    "sources:discover": "tsx scripts/discover-sources.ts",
     "workday:discover": "tsx scripts/discover-workday.ts"
   },
   "dependencies": {

@@ -28,11 +28,11 @@ export async function getRecentJobs(limit: number, supportFilter: SupportFilter 
 
   return sql<Array<{
     id: string; title: string; company: string; location: string; url: string;
-    roleFamily: string; visaSponsorship: string; relocationSupport: string; evidence: string[];
+    roleFamily: string; visaSponsorship: string; relocationSupport: string; evidence: string[]; supportScore: number;
   }>>`
     WITH ranked AS (
       SELECT j.id, j.title, j.location, j.url, j.posted_at, j.first_seen_at, co.name AS company,
-        c.role_family, c.visa_sponsorship, c.relocation_support, c.evidence,
+        c.role_family, c.visa_sponsorship, c.relocation_support, c.evidence, c.support_score,
         ROW_NUMBER() OVER (
           PARTITION BY LOWER(co.name), LOWER(REGEXP_REPLACE(j.title, '[^a-zA-Z0-9]+', '', 'g')),
             LOWER(COALESCE(j.location, ''))
@@ -45,10 +45,11 @@ export async function getRecentJobs(limit: number, supportFilter: SupportFilter 
       ${supportPredicate}
     )
     SELECT id::text, title, company, location, url, role_family AS "roleFamily",
-      visa_sponsorship AS "visaSponsorship", relocation_support AS "relocationSupport", evidence
+      visa_sponsorship AS "visaSponsorship", relocation_support AS "relocationSupport", evidence,
+      support_score AS "supportScore"
     FROM ranked
     WHERE duplicate_rank = 1
-    ORDER BY COALESCE(posted_at, first_seen_at) DESC
+    ORDER BY support_score DESC, COALESCE(posted_at, first_seen_at) DESC
     LIMIT ${Math.min(Math.max(limit, 1), 100)}
   `;
 }
@@ -61,7 +62,7 @@ export async function getJobById(id: string) {
     postedAt: Date | null; firstSeenAt: Date; lastSeenAt: Date; status: string; roleFamily: string;
     seniority: string; visaSponsorship: string; relocationSupport: string;
     internationalCandidates: string; existingWorkAuthorizationRequired: string;
-    confidence: number; evidence: string[];
+    confidence: number; evidence: string[]; supportScore: number; linkStatus: string;
   }>>`
     SELECT j.id::text, j.title, co.name AS company, co.website AS "companyWebsite",
       j.location, j.country_code AS "countryCode", j.remote_type AS "remoteType", j.url,
@@ -70,7 +71,7 @@ export async function getJobById(id: string) {
       c.role_family AS "roleFamily", c.seniority, c.visa_sponsorship AS "visaSponsorship",
       c.relocation_support AS "relocationSupport", c.international_candidates AS "internationalCandidates",
       c.existing_work_authorization_required AS "existingWorkAuthorizationRequired",
-      c.confidence, c.evidence
+      c.confidence, c.evidence, c.support_score AS "supportScore", j.link_status AS "linkStatus"
     FROM jobs j
     JOIN companies co ON co.id = j.company_id
     JOIN job_classifications c ON c.job_id = j.id

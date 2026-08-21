@@ -1,7 +1,7 @@
 import * as cheerio from "cheerio";
 import { z } from "zod";
 import type { AtsType, CompanyConfig, RawJob } from "@/lib/jobs/types";
-import { classifyRole } from "@/lib/jobs/role-classifier";
+import { isPotentialRoleTitle } from "@/lib/jobs/role-classifier";
 import { fetchText } from "./http";
 
 const MAX_DETAIL_PAGES = 150;
@@ -80,7 +80,7 @@ export async function fetchStructuredCareerJobs(
 
   const titledLinks = [...links].filter(([, title]) => title.length > 2);
   const selectedLinks = titledLinks.length > 0
-    ? titledLinks.filter(([, title]) => classifyRole(title))
+    ? titledLinks.filter(([, title]) => isPotentialRoleTitle(title))
     : [...links];
   const detailUrls = selectedLinks.map(([url]) => url).slice(0, MAX_DETAIL_PAGES);
   const rows = await mapWithLimit<string, RawJob | null>(detailUrls, 5, async (detailUrl) => {

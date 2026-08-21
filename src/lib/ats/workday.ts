@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { CompanyConfig, RawJob } from "@/lib/jobs/types";
-import { classifyRole } from "@/lib/jobs/role-classifier";
+import { isPotentialRoleTitle } from "@/lib/jobs/role-classifier";
 import { fetchJson, postJson } from "./http";
 
 const SEARCH_TERMS = [
@@ -85,7 +85,7 @@ export async function fetchWorkday(company: CompanyConfig): Promise<RawJob[]> {
         appliedFacets: {}, limit: PAGE_SIZE, offset: page * PAGE_SIZE, searchText: term,
       }));
       for (const summary of data.jobPostings) {
-        if (classifyRole(summary.title)) summaries.set(summary.externalPath, summary);
+        if (isPotentialRoleTitle(summary.title)) summaries.set(summary.externalPath, summary);
       }
       if ((page + 1) * PAGE_SIZE >= data.total || data.jobPostings.length === 0) break;
     }

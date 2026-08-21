@@ -3,6 +3,7 @@ import { closeMissingSourceJobs, finishIngestionRun, saveCompanyJobs, saveSource
 import { normalizeJob } from "@/lib/jobs/normalize";
 import { classifyRole, classifySeniority } from "@/lib/jobs/role-classifier";
 import { classifySponsorship } from "@/lib/jobs/sponsorship-classifier";
+import { calculateSupportScore } from "@/lib/jobs/support-score";
 import type { CompanyConfig, JobClassification } from "@/lib/jobs/types";
 
 async function mapLimit<T>(items: T[], limit: number, worker: (item: T) => Promise<void>) {
@@ -28,15 +29,19 @@ export async function runIngestion(companies: CompanyConfig[], concurrency = 4) 
     try {
       const rawJobs = await fetchCompanyJobs(company);
       const relevant = rawJobs.flatMap((raw) => {
-        const role = classifyRole(raw.title);
-        if (!role) return [];
         const job = normalizeJob(raw);
+        const role = classifyRole(raw.title, job.descriptionText);
+        if (!role) return [];
         const sponsorship = classifySponsorship(job.descriptionText);
-        const classification: JobClassification = {
+        const baseClassification = {
           roleFamily: role.roleFamily,
           seniority: classifySeniority(job.title),
           ...sponsorship,
           confidence: Math.min(role.score, sponsorship.confidence),
+        };
+        const classification: JobClassification = {
+          ...baseClassification,
+          supportScore: calculateSupportScore(baseClassification).total,
         };
         return [{ job, classification }];
       });

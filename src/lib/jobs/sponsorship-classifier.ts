@@ -16,6 +16,19 @@ const VISA_POSITIVE = [
   /(?:company-provided|employer-provided) immigration (?:counsel|lawyer|legal services)/i,
   /(?:immigration counsel|immigration lawyer) (?:is |will be )?(?:provided|available|covered)/i,
   /(?:new[ -]hire|employee) immigration assistance/i,
+  /(?:global mobility|immigration) (?:team|partner|provider|vendor) (?:will |can )?(?:manage|handle|support|assist with) (?:your |the )?(?:visa|immigration|work permit|residence permit)/i,
+  /(?:work|residence) permit (?:application|renewal|process(?:ing)?) (?:is |will be )?(?:handled|managed|supported|submitted) by (?:us|the company|our immigration team)/i,
+  /(?:certificate of sponsorship|\bcos\b) (?:is |will be )?(?:provided|available|assigned|issued)/i,
+  /(?:skilled worker|global business mobility|scale-up worker) (?:route |visa )?(?:sponsorship|support) (?:is |will be )?(?:available|provided|offered)/i,
+  /(?:highly skilled migrant|knowledge migrant|kennismigrant) (?:visa |permit |scheme )?(?:sponsorship|support|application) (?:is |will be )?(?:available|provided|handled|offered)/i,
+  /(?:we|the employer|the company) (?:are |is )?(?:an? )?(?:ind )?(?:recognised|recognized) sponsor.*(?:support|handle|submit) (?:your )?(?:highly skilled migrant|knowledge migrant|kennismigrant) application/i,
+  /(?:eu blue card|blaue karte) (?:application|support|sponsorship) (?:is |will be )?(?:available|provided|handled|offered)/i,
+  /(?:employment pass|s pass) (?:application|renewal|sponsorship|support) (?:is |will be )?(?:available|provided|handled|submitted|offered)/i,
+  /(?:certificate of eligibility|coe) (?:application|support) (?:is |will be )?(?:provided|handled|submitted)/i,
+  /(?:lmia|labour market impact assessment) (?:support|application) (?:is |will be )?(?:provided|handled|submitted)/i,
+  /(?:temporary skill shortage|subclass 482|skills in demand) visa (?:sponsorship|support) (?:is |will be )?(?:available|provided|offered)/i,
+  /(?:uae |emirates )?(?:employment|work|residence) visa (?:is |will be )?(?:provided|arranged|processed|sponsored)/i,
+  /(?:employer of record|eor) (?:arrangement|employment|support) (?:is |will be )?(?:available|provided|used)/i,
 ];
 const VISA_NEGATIVE = [
   /(?:cannot|can't|unable to|do not|does not|don't|won't|will not) (?:provide |offer )?(?:visa|immigration|work permit|work authorization) sponsorship/i,
@@ -30,6 +43,8 @@ const VISA_NEGATIVE = [
   /(?:must|should) not require (?:current or future )?(?:visa|work permit|work authorization) sponsorship/i,
   /(?:do not|does not|don't|doesn't|cannot|can't|won't|will not) sponsor (?:employment-based )?immigration/i,
   /no (?:visa|immigration|work permit) (?:support|assistance) (?:is |will be )?(?:available|provided|offered)/i,
+  /not (?:a |an )?(?:licensed|recognised|recognized) sponsor/i,
+  /(?:certificate of sponsorship|employment pass|s pass|eu blue card|highly skilled migrant|lmia) (?:is |will be )?not (?:available|provided|supported)/i,
 ];
 const AUTH_REQUIRED = [
   /must (?:already )?(?:have|possess) (?:the )?(?:right|authorization) to work/i,
@@ -55,6 +70,9 @@ const RELOCATION_POSITIVE = [
   /(?:housing|home) search assistance (?:is |will be )?(?:provided|included|available)/i,
   /(?:destination services|relocation agent) (?:are |is |will be )?(?:provided|included|available)/i,
   /(?:partner|spouse|dependent|family) relocation (?:support|assistance|package)/i,
+  /(?:settling[ -]in|destination) (?:services|support|assistance)/i,
+  /(?:relocation|mobility) vendor (?:is |will be )?(?:provided|available|assigned)/i,
+  /(?:home finding|school search|area orientation) (?:support|assistance|services)/i,
 ];
 const RELOCATION_NEGATIVE = [
   /no relocation (?:assistance|support|package|allowance|reimbursement)/i,

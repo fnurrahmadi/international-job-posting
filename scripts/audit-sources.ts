@@ -19,7 +19,7 @@ interface AuditRow {
 async function audit(company: CompanyConfig): Promise<AuditRow> {
   try {
     const jobs = await fetchCompanyJobs(company);
-    const relevant = jobs.filter((job) => classifyRole(job.title));
+    const relevant = jobs.filter((job) => classifyRole(job.title, normalizeJob(job).descriptionText));
     const signals = relevant.map((job) => classifySponsorship(normalizeJob(job).descriptionText));
     return {
       company: company.name,

@@ -1,6 +1,6 @@
 import * as cheerio from "cheerio";
 import type { CompanyConfig, RawJob } from "@/lib/jobs/types";
-import { classifyRole } from "@/lib/jobs/role-classifier";
+import { isPotentialRoleTitle } from "@/lib/jobs/role-classifier";
 import { fetchText } from "./http";
 
 const MAX_PAGES = 20;
@@ -35,7 +35,7 @@ export function parseBoltListing(html: string, careersUrl: string): BoltSummary[
     const columns = item.find("h3 button > div > div");
     const title = columns.eq(0).text().replace(/\s+/g, " ").trim();
     const href = item.find('a[href*="/careers/positions/"]').filter((_i, link) => !($(link).attr("href") ?? "").includes("tab=apply")).attr("href");
-    if (!href || !classifyRole(title)) return [];
+    if (!href || !isPotentialRoleTitle(title)) return [];
     const url = new URL(href, careersUrl).toString();
     const id = new URL(url).pathname.split("/").filter(Boolean).at(-1);
     if (!id) return [];

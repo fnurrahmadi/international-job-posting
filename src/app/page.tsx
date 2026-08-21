@@ -69,6 +69,7 @@ export default async function Home({
                   {job.evidence[0] ? <p className="evidence-preview">“{job.evidence[0]}”</p> : null}
                 </div>
                 <div className="signals">
+                  <span className="score">Support score: {job.supportScore}</span>
                   <span>{job.roleFamily.replaceAll("_", " ")}</span>
                   <span data-signal={job.visaSponsorship.toLowerCase()}>Visa: {job.visaSponsorship}</span>
                   <span data-signal={job.relocationSupport.toLowerCase()}>Relocation: {job.relocationSupport}</span>

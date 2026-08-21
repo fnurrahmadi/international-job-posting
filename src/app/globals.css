@@ -25,6 +25,7 @@ h2 { margin:0; font-size:2rem; }.status { color:var(--muted); font-size:.85rem; 
 .signals { display:flex; flex-wrap:wrap; justify-content:flex-end; align-items:center; gap:8px; }
 .signals span { padding:7px 10px; border:1px solid var(--line); color:var(--muted); font-size:.72rem; text-transform:capitalize; }
 .signals [data-signal="yes"] { border-color:#58782c; color:var(--accent); }.signals [data-signal="no"] { color:#ff9c8d; }
+.signals .score { border-color:#4774a8; color:#9dccff; }
 .empty { padding:48px; border:1px dashed var(--line); color:var(--muted); text-align:center; }
 code { color:var(--accent); }
 .muted { color:var(--muted); }

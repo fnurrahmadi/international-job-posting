@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { CompanyConfig, RawJob } from "@/lib/jobs/types";
-import { classifyRole } from "@/lib/jobs/role-classifier";
+import { isPotentialRoleTitle } from "@/lib/jobs/role-classifier";
 import { fetchJson } from "./http";
 
 const locationSchema = z.object({
@@ -53,7 +53,7 @@ async function fetchRelevantSummaries(company: CompanyConfig) {
     const url = `https://api.smartrecruiters.com/v1/companies/${encodeURIComponent(company.identifier)}/postings?limit=${limit}&offset=${offset}`;
     const page = listSchema.parse(await fetchJson(url));
     total = page.totalFound;
-    summaries.push(...page.content.filter((posting) => classifyRole(posting.name)));
+    summaries.push(...page.content.filter((posting) => isPotentialRoleTitle(posting.name)));
     offset += page.content.length;
     if (page.content.length === 0) break;
   } while (offset < total);

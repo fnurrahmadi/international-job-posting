@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { CompanyConfig, RawJob } from "@/lib/jobs/types";
-import { classifyRole } from "@/lib/jobs/role-classifier";
+import { isPotentialRoleTitle } from "@/lib/jobs/role-classifier";
 import { fetchJson } from "./http";
 
 const SEARCH_TERMS = [
@@ -55,7 +55,7 @@ export async function fetchOracle(company: CompanyConfig): Promise<RawJob[]> {
       })).items[0];
       if (!root) break;
       for (const summary of root.requisitionList.items) {
-        if (classifyRole(summary.Title)) summaries.set(String(summary.Id), summary);
+        if (isPotentialRoleTitle(summary.Title)) summaries.set(String(summary.Id), summary);
       }
       if ((page + 1) * PAGE_SIZE >= root.TotalJobsCount || root.requisitionList.items.length === 0) break;
     }

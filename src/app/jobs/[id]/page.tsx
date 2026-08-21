@@ -25,7 +25,7 @@ export default async function JobPage({ params }: { params: Promise<{ id: string
       </header>
       <section className="detail-grid">
         <article className="detail-card"><h2>Support assessment</h2>
-          <div className="signals detail-signals"><span data-signal={job.visaSponsorship.toLowerCase()}>Visa: {job.visaSponsorship}</span><span data-signal={job.relocationSupport.toLowerCase()}>Relocation: {job.relocationSupport}</span><span>Confidence: {Math.round(job.confidence * 100)}%</span></div>
+          <div className="signals detail-signals"><span className="score">Support score: {job.supportScore}</span><span data-signal={job.visaSponsorship.toLowerCase()}>Visa: {job.visaSponsorship}</span><span data-signal={job.relocationSupport.toLowerCase()}>Relocation: {job.relocationSupport}</span><span>Confidence: {Math.round(job.confidence * 100)}%</span></div>
           <h3>Evidence from the listing</h3>
           {job.evidence.length ? <ul>{job.evidence.map((item) => <li key={item}>{item}</li>)}</ul> : <p className="muted">No explicit support wording was found.</p>}
         </article>
@@ -36,6 +36,7 @@ export default async function JobPage({ params }: { params: Promise<{ id: string
           <div><dt>Posted</dt><dd>{displayDate(job.postedAt)}</dd></div>
           <div><dt>First discovered</dt><dd>{displayDate(job.firstSeenAt)}</dd></div>
           <div><dt>Status</dt><dd>{job.status.toLowerCase()}</dd></div>
+          <div><dt>Application link</dt><dd>{job.linkStatus.toLowerCase()}</dd></div>
         </dl></aside>
       </section>
       <section className="description"><h2>Job description</h2><div>{job.descriptionText}</div></section>

@@ -59,6 +59,12 @@ Only target analytics role families are stored. Visa and relocation fields use `
 
 This milestone uses deterministic rules so ingestion remains free and auditable. A later classifier can add an LLM fallback only for `UNKNOWN` records without changing the schema.
 
+Candidate titles are now evaluated against their descriptions before storage, allowing analytics-heavy roles with unconventional names to pass while retaining a strict final relevance check. Support results are ranked with an explainable 0–100 score based on explicit visa, relocation, international-candidate, work-authorization, and evidence signals.
+
+The ingestion workflow checks a rotating batch of application links on each run. Definitive 404/410 responses or redirects to a generic homepage must fail twice before a job is closed; transient network and access errors do not close jobs.
+
+To audit a new employer page without adding it to production, run `pnpm sources:discover -- <careers-url>`. The command detects supported ATS links, validates the public feed, measures relevant-job yield, and prints a candidate configuration entry.
+
 ## Commands
 
 ```bash
@@ -67,4 +73,6 @@ pnpm typecheck
 pnpm lint
 pnpm build
 pnpm alerts:send
+pnpm jobs:check-links
+pnpm sources:discover -- https://example.com/careers
 ```
