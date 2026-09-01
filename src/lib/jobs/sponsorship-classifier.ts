@@ -30,7 +30,13 @@ const VISA_POSITIVE = [
   /(?:uae |emirates )?(?:employment|work|residence) visa (?:is |will be )?(?:provided|arranged|processed|sponsored)/i,
   /(?:employer of record|eor) (?:arrangement|employment|support) (?:is |will be )?(?:available|provided|used)/i,
 ];
+const COMBINED_SUPPORT_NEGATIVE = [
+  /(?:visa|immigration|work permit)(?: sponsorship)?\s*(?:and|or|&|\/)\s*relocation (?:support|assistance|sponsorship)?\s*(?:(?:is|are|will be)\s+not|will\s+not\s+be)\s+(?:available|provided|offered|covered)/i,
+  /(?:visa|relocation)\s*(?:and|or|&|\/)\s*(?:visa|relocation) support\s*(?:(?:is|are|will be)\s+not|will\s+not\s+be)\s+(?:available|provided|offered|covered)/i,
+  /(?:cannot|can't|unable to|do not|does not|don't|won't|will not) (?:provide|offer|cover) (?:any )?(?:visa|immigration|work permit)(?: sponsorship| support| assistance)?\s*(?:and|or|&|\/)\s*relocation (?:support|assistance)?/i,
+];
 const VISA_NEGATIVE = [
+  ...COMBINED_SUPPORT_NEGATIVE,
   /(?:cannot|can't|unable to|do not|does not|don't|won't|will not) (?:provide |offer )?(?:visa|immigration|work permit|work authorization) sponsorship/i,
   /(?:cannot|can't|unable to|not able to|won't|will not) sponsor visas?/i,
   /(?:cannot|can't|unable to|not able to|won't|will not) (?:provide|offer) (?:any )?(?:visa|immigration|work permit|work authorization)(?: related)? (?:support|assistance|services)/i,
@@ -75,8 +81,9 @@ const RELOCATION_POSITIVE = [
   /(?:home finding|school search|area orientation) (?:support|assistance|services)/i,
 ];
 const RELOCATION_NEGATIVE = [
+  ...COMBINED_SUPPORT_NEGATIVE,
   /no relocation (?:assistance|support|package|allowance|reimbursement)/i,
-  /relocation (?:is |will be )?not (?:available|provided|offered|covered)/i,
+  /relocation(?: (?:support|assistance|package|allowance|reimbursement))? (?:(?:is|are|will be) not|will not be) (?:available|provided|offered|covered)/i,
   /(?:cannot|can't|unable to|do not|does not|don't|won't|will not) (?:provide |offer |cover )?relocation/i,
   /(?:moving|travel|accommodation) (?:costs|expenses) (?:are |will be )?not (?:covered|paid|reimbursed)/i,
 ];

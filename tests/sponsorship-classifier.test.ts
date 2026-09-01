@@ -63,6 +63,19 @@ test("detects broader negative sponsorship and relocation language", () => {
   assert.equal(relocation.relocationSupport, "NO");
 });
 
+test("combined visa and relocation denials override positive-looking support terms", () => {
+  for (const description of [
+    "Visa and relocation support are not provided for this role.",
+    "Visa sponsorship & relocation assistance will not be offered.",
+    "We do not provide visa or relocation support.",
+  ]) {
+    const result = classifySponsorship(description);
+    assert.equal(result.visaSponsorship, "NO", description);
+    assert.equal(result.relocationSupport, "NO", description);
+    assert.equal(result.possibleSupport, false, description);
+  }
+});
+
 test("does not promote conditional sponsorship to confirmed support", () => {
   const result = classifySponsorship("Visa sponsorship may be considered for exceptional candidates on a case-by-case basis.");
   assert.equal(result.visaSponsorship, "UNKNOWN");
