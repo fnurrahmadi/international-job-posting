@@ -1,5 +1,6 @@
 import { getSql } from "./client";
 import type { CompanyConfig, JobClassification, NormalizedJob } from "@/lib/jobs/types";
+import { SPONSORSHIP_CLASSIFIER_VERSION } from "@/lib/jobs/sponsorship-classifier";
 
 export async function startIngestionRun(companiesAttempted: number): Promise<string> {
   const sql = getSql();
@@ -63,7 +64,7 @@ export async function saveCompanyJobs(company: CompanyConfig, rows: Array<{ job:
         VALUES (${savedJob.id}, ${classification.roleFamily}, ${classification.seniority},
           ${classification.visaSponsorship}, ${classification.relocationSupport},
           ${classification.internationalCandidates}, ${classification.existingWorkAuthorizationRequired},
-          ${classification.confidence}, ${tx.json(classification.evidence)}, 'rules-v5', ${classification.supportScore},
+          ${classification.confidence}, ${tx.json(classification.evidence)}, ${SPONSORSHIP_CLASSIFIER_VERSION}, ${classification.supportScore},
           ${classification.possibleSupport}, ${tx.json(classification.possibleEvidence)})
         ON CONFLICT (job_id) DO UPDATE SET role_family = EXCLUDED.role_family,
           seniority = EXCLUDED.seniority, visa_sponsorship = EXCLUDED.visa_sponsorship,

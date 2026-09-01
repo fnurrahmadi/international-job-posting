@@ -1,4 +1,7 @@
 import type { TernarySignal } from "./types";
+import { assessInternationalEligibility } from "./location-intelligence";
+
+export const SPONSORSHIP_CLASSIFIER_VERSION = "rules-v7";
 
 const VISA_POSITIVE = [
   /(?:visa|immigration|work permit|work authorization) sponsorship (?:is |will be )?(?:available|provided|offered)/i,
@@ -29,6 +32,9 @@ const VISA_POSITIVE = [
   /(?:temporary skill shortage|subclass 482|skills in demand) visa (?:sponsorship|support) (?:is |will be )?(?:available|provided|offered)/i,
   /(?:uae |emirates )?(?:employment|work|residence) visa (?:is |will be )?(?:provided|arranged|processed|sponsored)/i,
   /(?:employer of record|eor) (?:arrangement|employment|support) (?:is |will be )?(?:available|provided|used)/i,
+  /(?:we|our (?:global mobility|people|immigration) team) (?:will |can )?(?:help|assist|support) (?:you |successful candidates? )?(?:obtain|secure|apply for) (?:a |the )?(?:visa|work permit|residence permit)/i,
+  /(?:visa|work permit|residence permit) (?:application|process(?:ing)?) (?:support|guidance|assistance)/i,
+  /(?:immigration|global mobility) (?:support|assistance|services) (?:is |are |will be )?(?:available|provided|included|offered)/i,
 ];
 const COMBINED_SUPPORT_NEGATIVE = [
   /(?:visa|immigration|work permit)(?: sponsorship)?\s*(?:and|or|&|\/)\s*relocation (?:support|assistance|sponsorship)?\s*(?:(?:is|are|will be)\s+not|will\s+not\s+be)\s+(?:available|provided|offered|covered)/i,
@@ -78,6 +84,10 @@ const RELOCATION_POSITIVE = [
   /(?:partner|spouse|dependent|family) relocation (?:support|assistance|package)/i,
   /(?:settling[ -]in|destination) (?:services|support|assistance)/i,
   /(?:relocation|mobility) vendor (?:is |will be )?(?:provided|available|assigned)/i,
+  /(?:help|support|assist) (?:you |successful candidates? )?(?:with |in )?(?:moving|your move) to/i,
+  /(?:moving|relocation) (?:support|guidance|assistance|services) (?:is |are |will be )?(?:available|provided|included|offered)/i,
+  /(?:global mobility|mobility) (?:support|assistance|package|services)/i,
+  /(?:relocation|settling[ -]in) (?:budget|grant|benefit)/i,
   /(?:home finding|school search|area orientation) (?:support|assistance|services)/i,
 ];
 const RELOCATION_NEGATIVE = [
@@ -131,15 +141,20 @@ function evidenceFor(segments: string[], patterns: RegExp[]): string[] {
 
 export function classifySponsorship(text: string) {
   const segments = evidenceSegments(text);
-  const authRequired = segments.some((segment) => matchesAny(segment, AUTH_REQUIRED));
+  const eligibility = assessInternationalEligibility(text);
+  const authRequired = segments.some((segment) => matchesAny(segment, AUTH_REQUIRED))
+    || eligibility.existingWorkAuthorizationRequired === "YES";
   const visaSponsorship = authRequired ? "NO" : signal(segments, VISA_POSITIVE, VISA_NEGATIVE);
   const relocationSupport = signal(segments, RELOCATION_POSITIVE, RELOCATION_NEGATIVE);
-  const internationalCandidates = signal(segments, INTERNATIONAL_POSITIVE, [...AUTH_REQUIRED, ...VISA_NEGATIVE]);
+  const textInternational = signal(segments, INTERNATIONAL_POSITIVE, [...AUTH_REQUIRED, ...VISA_NEGATIVE]);
+  const internationalCandidates: TernarySignal = eligibility.internationalCandidates === "NO" || textInternational === "NO"
+    ? "NO"
+    : eligibility.internationalCandidates === "YES" || textInternational === "YES" ? "YES" : "UNKNOWN";
   const possibleEvidence = visaSponsorship === "UNKNOWN" && relocationSupport === "UNKNOWN" && !authRequired
     ? evidenceFor(segments, POSSIBLE_SUPPORT)
     : [];
   const allPatterns = [...VISA_POSITIVE, ...VISA_NEGATIVE, ...AUTH_REQUIRED, ...RELOCATION_POSITIVE, ...RELOCATION_NEGATIVE, ...INTERNATIONAL_POSITIVE];
-  const evidence = evidenceFor(segments, allPatterns);
+  const evidence = [...new Set([...evidenceFor(segments, allPatterns), ...eligibility.evidence])].slice(0, 5);
 
   return {
     visaSponsorship,

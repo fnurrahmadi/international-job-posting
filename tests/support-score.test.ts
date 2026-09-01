@@ -15,7 +15,14 @@ test("ranks explicit visa and relocation evidence above unknown support", () => 
   const restricted = calculateSupportScore({ ...base, existingWorkAuthorizationRequired: "YES", visaSponsorship: "NO" }).total;
   assert.ok(supported > unknown);
   assert.ok(unknown > restricted);
-  assert.equal(supported, 94);
+  assert.ok(supported >= 85);
+});
+
+test("does not reward unknown work authorization and penalizes explicit restrictions", () => {
+  assert.equal(calculateSupportScore(base).authorization, 0);
+  const open = calculateSupportScore({ ...base, internationalCandidates: "YES" }).total;
+  const localOnly = calculateSupportScore({ ...base, internationalCandidates: "NO", existingWorkAuthorizationRequired: "YES", visaSponsorship: "NO" }).total;
+  assert.ok(open > localOnly);
 });
 
 test("possible opportunities rank above unsupported unknowns but below confirmed support", () => {

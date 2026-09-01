@@ -8,6 +8,24 @@ test("detects positive visa and relocation language", () => {
   assert.equal(result.relocationSupport, "YES");
 });
 
+test("detects broader immigration, mobility, and moving language", () => {
+  const immigration = classifySponsorship("Our global mobility team will help you obtain a work permit.");
+  assert.equal(immigration.visaSponsorship, "YES");
+
+  const moving = classifySponsorship("We will assist successful candidates with moving to Amsterdam.");
+  assert.equal(moving.relocationSupport, "YES");
+
+  const international = classifySponsorship("Applications are welcome from outside the country and from abroad.");
+  assert.equal(international.internationalCandidates, "YES");
+});
+
+test("local eligibility restrictions override international employer wording", () => {
+  const result = classifySponsorship("We are a global employer, but candidates must currently reside in Spain and already have authorization to work there.");
+  assert.equal(result.internationalCandidates, "NO");
+  assert.equal(result.existingWorkAuthorizationRequired, "YES");
+  assert.equal(result.visaSponsorship, "NO");
+});
+
 test("negative language overrides ambiguous sponsorship words", () => {
   const result = classifySponsorship("You must already have the right to work. Visa sponsorship is not available.");
   assert.equal(result.visaSponsorship, "NO");

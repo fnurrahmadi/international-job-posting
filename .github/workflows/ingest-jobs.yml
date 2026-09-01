@@ -44,6 +44,7 @@ jobs:
       - run: pnpm ingest
         env:
           INGEST_CONCURRENCY: "4"
+      - run: pnpm jobs:reclassify
       - run: pnpm jobs:check-links
         env:
           LINK_CHECK_LIMIT: "100"

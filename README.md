@@ -51,7 +51,7 @@ unverified enterprise tenants should remain disabled until their feeds pass `pnp
 
 The workflow in `.github/workflows/ingest-jobs.yml` runs daily at approximately 02:17 Asia/Bangkok (19:17 UTC) and can also be started manually. Add a repository Actions secret named `DATABASE_URL` before enabling it. To enable saved-search emails, also add Actions secrets `RESEND_API_KEY` and `ALERT_FROM_EMAIL`, plus an Actions variable `APP_BASE_URL` containing the production URL. Without the email secrets, the alert step exits successfully without sending.
 
-Every successful company fetch is authoritative for that company: unseen postings are marked closed. A failed fetch never closes that company's existing jobs. Upserts make reruns safe.
+Every successful company fetch is authoritative for that company: unseen postings are marked closed. A failed fetch never closes that company's existing jobs. Upserts make reruns safe. After ingestion, every active stored job is reclassified with the latest rules, so wording and ranking improvements apply to older postings without manual labels. The rotating link check closes definitively dead jobs only after two failures.
 
 ## Classification behavior
 
@@ -75,6 +75,7 @@ pnpm typecheck
 pnpm lint
 pnpm build
 pnpm alerts:send
+pnpm jobs:reclassify
 pnpm jobs:check-links
 pnpm sources:discover -- https://example.com/careers
 ```

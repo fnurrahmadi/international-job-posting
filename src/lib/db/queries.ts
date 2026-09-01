@@ -34,7 +34,7 @@ export async function getRecentJobs(limit: number, supportFilter: SupportFilter 
     possibleSupport: boolean; possibleEvidence: string[]; supportScore: number;
   }>>`
     WITH ranked AS (
-      SELECT j.id, j.title, j.location, j.url, j.posted_at, j.first_seen_at, co.name AS company,
+      SELECT j.id, j.title, j.location, j.url, j.posted_at, j.first_seen_at, j.link_status, co.name AS company,
         c.role_family, c.visa_sponsorship, c.relocation_support, c.evidence, c.support_score,
         c.possible_support, c.possible_evidence,
         ROW_NUMBER() OVER (
@@ -54,7 +54,9 @@ export async function getRecentJobs(limit: number, supportFilter: SupportFilter 
       possible_evidence AS "possibleEvidence"
     FROM ranked
     WHERE duplicate_rank = 1
-    ORDER BY support_score DESC, COALESCE(posted_at, first_seen_at) DESC
+    ORDER BY support_score DESC, JSONB_ARRAY_LENGTH(evidence) DESC,
+      CASE WHEN link_status = 'HEALTHY' THEN 1 ELSE 0 END DESC,
+      COALESCE(posted_at, first_seen_at) DESC
     LIMIT ${Math.min(Math.max(limit, 1), 100)}
   `;
 }

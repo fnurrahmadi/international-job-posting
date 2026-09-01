@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { extractCountryCodes, extractEligibleCountryCodes, inferCountryCode } from "../src/lib/jobs/location-intelligence";
+import { assessInternationalEligibility, extractCountryCodes, extractEligibleCountryCodes, inferCountryCode } from "../src/lib/jobs/location-intelligence";
 
 test("infers countries from country names, codes, and major cities", () => {
   assert.equal(inferCountryCode("Berlin, Germany"), "DE");
@@ -17,4 +17,19 @@ test("extracts countries only from eligibility contexts", () => {
     extractEligibleCountryCodes("Our headquarters is in the US. This role is remote within Germany, France, or Spain."),
     ["DE", "ES", "FR"],
   );
+});
+
+test("recognizes worldwide and multi-country eligibility", () => {
+  const worldwide = assessInternationalEligibility("Applications are welcome from anywhere in the world.");
+  assert.equal(worldwide.internationalCandidates, "YES");
+
+  const regional = assessInternationalEligibility("This role is remote within Germany, France, or Spain.");
+  assert.equal(regional.internationalCandidates, "YES");
+  assert.deepEqual(regional.eligibleCountryCodes, ["DE", "ES", "FR"]);
+});
+
+test("local residence and work authorization requirements override broad language", () => {
+  const local = assessInternationalEligibility("We are a global company. Candidates must currently reside in Germany and already have the right to work there.");
+  assert.equal(local.internationalCandidates, "NO");
+  assert.equal(local.existingWorkAuthorizationRequired, "YES");
 });
