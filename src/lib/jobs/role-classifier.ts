@@ -1,6 +1,26 @@
 import type { JobClassification, RoleFamily } from "./types";
 
 const FAMILY_RULES: Array<[RoleFamily, RegExp[]]> = [
+  ["product_management", [
+    /\b(?:technical |senior |lead |principal |group |staff )?product manager\b/i,
+    /\bproduct management (?:lead|manager|director|head)\b/i,
+    /\bproduct owner\b/i,
+  ]],
+  ["machine_learning", [
+    /\b(?:machine learning|ml|ai) engineer\b/i,
+    /\b(?:applied|research) scientist\b/i,
+    /\bmachine learning scientist\b/i,
+  ]],
+  ["data_engineering", [
+    /\b(?:senior |lead |principal |staff )?(?:data|analytics) engineer\b/i,
+    /\bdata (?:platform|infrastructure) engineer\b/i,
+    /\b(?:etl|data warehouse) (?:developer|engineer)\b/i,
+    /\bdata architect\b/i,
+  ]],
+  ["data_science", [
+    /\b(?:senior |lead |principal |staff )?data scientist\b/i,
+    /\bdata science (?:lead|manager|director|head)\b/i,
+  ]],
   ["pricing_revenue", [/\bpricing\b/i, /\brevenue (?:management|analyst|analytics)\b/i, /\bcommercial (?:data |insights? |analytics? )?(?:analyst|partner|specialist|consultant)\b/i, /\bstrategic finance analyst\b/i, /\brevenue management specialist\b/i]],
   ["product_analytics", [/\bproduct (?:data |insights? )?analyst\b/i, /\bproduct analytics\b/i, /\bproduct insights?\b/i, /\bexperimentation analyst\b/i]],
   ["business_analytics", [/\bbusiness (?:intelligence )?analyst\b/i, /\bbi analyst\b/i]],
@@ -12,7 +32,7 @@ const FAMILY_RULES: Array<[RoleFamily, RegExp[]]> = [
   ["data_analytics", [/\bdata analyst\b/i, /\banalytics? (?:analyst|specialist|consultant)\b/i, /\binsights? analyst\b/i, /\bdecision scientist\b/i, /\bperformance analyst\b/i, /\b(?:fraud|risk) analytics\b/i]],
 ];
 
-const POTENTIAL_TITLE = /\b(?:analyst|analytics|insights?|intelligence|pricing|revenue management|performance|strategy|workforce planning|decision scientist|commercial|marketplace)\b/i;
+const POTENTIAL_TITLE = /\b(?:analyst|analytics|insights?|intelligence|pricing|revenue management|performance|strategy|workforce planning|decision scientist|commercial|marketplace|data scientist|data engineer|machine learning|ml engineer|ai engineer|product manager|product owner|product management)\b/i;
 const EXCLUDED_TITLE = /\b(?:software|backend|frontend|full[ -]?stack|mobile|security|network|infrastructure|systems?) engineer\b/i;
 const DESCRIPTION_SIGNALS = [
   /\b(?:sql|tableau|power bi|looker|snowflake|databricks)\b/i,
@@ -21,6 +41,12 @@ const DESCRIPTION_SIGNALS = [
   /\b(?:experimentation|a\/b test|statistical|quantitative|data-driven)\b/i,
   /\b(?:pricing|revenue|commercial|product|growth|operations|marketplace|customer) (?:performance|strategy|data|decisions?|insights?|analytics)\b/i,
 ];
+
+export function roleCategoryForFamily(roleFamily: RoleFamily): "analytics" | "data_ml" | "product" {
+  if (["data_science", "data_engineering", "machine_learning"].includes(roleFamily)) return "data_ml";
+  if (roleFamily === "product_management") return "product";
+  return "analytics";
+}
 
 export function isPotentialRoleTitle(title: string) {
   return POTENTIAL_TITLE.test(title) && !EXCLUDED_TITLE.test(title);

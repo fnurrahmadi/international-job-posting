@@ -1,17 +1,18 @@
 import { randomUUID } from "node:crypto";
 import { getSql } from "@/lib/db/client";
 import type { SupportFilter } from "@/lib/db/queries";
+import type { RoleCategory } from "@/lib/jobs/types";
 
 export type AlertSupportFilter = Exclude<SupportFilter, "all">;
 
-export async function saveAlert(email: string, supportFilter: AlertSupportFilter, countryCode?: string) {
+export async function saveAlert(email: string, supportFilter: AlertSupportFilter, roleCategory: RoleCategory = "analytics", countryCode?: string) {
   const sql = getSql();
   const token = randomUUID();
   const normalizedCountry = countryCode?.trim().toUpperCase() || null;
   const [row] = await sql<[{ id: string; unsubscribeToken: string }]>`
-    INSERT INTO saved_searches (email, support_filter, country_code, unsubscribe_token)
-    VALUES (${email.trim().toLowerCase()}, ${supportFilter.toUpperCase()}, ${normalizedCountry}, ${token})
-    ON CONFLICT (email, support_filter, country_code) DO UPDATE
+    INSERT INTO saved_searches (email, support_filter, role_category, country_code, unsubscribe_token)
+    VALUES (${email.trim().toLowerCase()}, ${supportFilter.toUpperCase()}, ${roleCategory.toUpperCase()}, ${normalizedCountry}, ${token})
+    ON CONFLICT (email, support_filter, role_category, country_code) DO UPDATE
       SET active = TRUE, unsubscribe_token = ${token}, updated_at = NOW()
     RETURNING id::text, unsubscribe_token AS "unsubscribeToken"
   `;
@@ -42,6 +43,11 @@ export async function getPendingAlerts() {
       AND j.first_seen_at >= COALESCE(s.last_sent_at, s.created_at - INTERVAL '1 day')
     LEFT JOIN companies co ON co.id = j.company_id
     LEFT JOIN job_classifications c ON c.job_id = j.id
+      AND CASE s.role_category
+        WHEN 'DATA_ML' THEN c.role_family IN ('data_science', 'data_engineering', 'machine_learning')
+        WHEN 'PRODUCT' THEN c.role_family = 'product_management'
+        ELSE c.role_family NOT IN ('data_science', 'data_engineering', 'machine_learning', 'product_management')
+      END
       AND CASE s.support_filter
         WHEN 'VISA' THEN c.visa_sponsorship = 'YES'
         WHEN 'RELOCATION' THEN c.relocation_support = 'YES'

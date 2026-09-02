@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import type { RoleCategory } from "@/lib/jobs/types";
 
-export function AlertForm({ supportFilter }: { supportFilter: "supported" | "visa" | "relocation" | "possible" }) {
+export function AlertForm({ supportFilter, roleCategory }: { supportFilter: "supported" | "visa" | "relocation" | "possible"; roleCategory: RoleCategory }) {
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
@@ -15,6 +16,7 @@ export function AlertForm({ supportFilter }: { supportFilter: "supported" | "vis
   return (
     <form className="alert-form" onSubmit={submit}>
       <input type="hidden" name="supportFilter" value={supportFilter} />
+      <input type="hidden" name="roleCategory" value={roleCategory} />
       <div className="honeypot" aria-hidden="true"><label>Company<input name="company" tabIndex={-1} autoComplete="off" /></label></div>
       <label>Email<input name="email" type="email" required placeholder="you@example.com" autoComplete="email" /></label>
       <label>Country (optional)<input name="countryCode" maxLength={2} placeholder="DE" aria-describedby="country-help" /></label>

@@ -1,9 +1,19 @@
 import { getSql } from "./client";
+import type { RoleCategory } from "@/lib/jobs/types";
 
 export type SupportFilter = "supported" | "visa" | "relocation" | "possible" | "all";
 
-export async function getDashboardStats() {
+function rolePredicate(sql: ReturnType<typeof getSql>, roleCategory: RoleCategory) {
+  return roleCategory === "data_ml"
+    ? sql`AND c.role_family IN ('data_science', 'data_engineering', 'machine_learning')`
+    : roleCategory === "product"
+      ? sql`AND c.role_family = 'product_management'`
+      : sql`AND c.role_family NOT IN ('data_science', 'data_engineering', 'machine_learning', 'product_management')`;
+}
+
+export async function getDashboardStats(roleCategory: RoleCategory = "analytics") {
   const sql = getSql();
+  const roles = rolePredicate(sql, roleCategory);
   const [row] = await sql<[{ jobs: number; companies: number; sponsor_positive: number }]>`
     SELECT
       COUNT(*)::int AS jobs,
@@ -12,12 +22,14 @@ export async function getDashboardStats() {
     FROM jobs j
     JOIN job_classifications c ON c.job_id = j.id
     WHERE j.status = 'ACTIVE'
+    ${roles}
   `;
   return { jobs: row.jobs, companies: row.companies, sponsorPositive: row.sponsor_positive };
 }
 
-export async function getRecentJobs(limit: number, supportFilter: SupportFilter = "supported") {
+export async function getRecentJobs(limit: number, supportFilter: SupportFilter = "supported", roleCategory: RoleCategory = "analytics") {
   const sql = getSql();
+  const roles = rolePredicate(sql, roleCategory);
   const supportPredicate = supportFilter === "visa"
     ? sql`AND c.visa_sponsorship = 'YES'`
     : supportFilter === "relocation"
@@ -47,6 +59,7 @@ export async function getRecentJobs(limit: number, supportFilter: SupportFilter 
       JOIN job_classifications c ON c.job_id = j.id
       WHERE j.status = 'ACTIVE'
       ${supportPredicate}
+      ${roles}
     )
     SELECT id::text, title, company, location, url, role_family AS "roleFamily",
       visa_sponsorship AS "visaSponsorship", relocation_support AS "relocationSupport", evidence,

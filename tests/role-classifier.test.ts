@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { classifyRole, classifySeniority, isPotentialRoleTitle } from "../src/lib/jobs/role-classifier";
+import { classifyRole, classifySeniority, isPotentialRoleTitle, roleCategoryForFamily } from "../src/lib/jobs/role-classifier";
 
 test("classifies target analytics role families", () => {
   assert.equal(classifyRole("Senior Analyst – Commercial Strategy & Pricing")?.roleFamily, "pricing_revenue");
@@ -12,6 +12,18 @@ test("classifies target analytics role families", () => {
   assert.equal(classifyRole("Strategic Finance Analyst")?.roleFamily, "pricing_revenue");
   assert.equal(classifyRole("Fraud Analytics Specialist")?.roleFamily, "data_analytics");
   assert.equal(classifyRole("Backend Engineer"), null);
+});
+
+test("classifies data, ML, and product management without moving analytics roles", () => {
+  assert.equal(classifyRole("Senior Data Scientist")?.roleFamily, "data_science");
+  assert.equal(classifyRole("Analytics Engineer")?.roleFamily, "data_engineering");
+  assert.equal(classifyRole("Staff Machine Learning Engineer")?.roleFamily, "machine_learning");
+  assert.equal(classifyRole("Technical Product Manager")?.roleFamily, "product_management");
+  assert.equal(classifyRole("Product Owner")?.roleFamily, "product_management");
+  assert.equal(classifyRole("Product Data Analyst")?.roleFamily, "product_analytics");
+  assert.equal(roleCategoryForFamily("product_analytics"), "analytics");
+  assert.equal(roleCategoryForFamily("data_engineering"), "data_ml");
+  assert.equal(roleCategoryForFamily("product_management"), "product");
 });
 
 test("uses description evidence for unconventional analytics titles", () => {
