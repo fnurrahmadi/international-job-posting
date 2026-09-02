@@ -46,7 +46,8 @@ export async function getPendingAlerts() {
       AND CASE s.role_category
         WHEN 'DATA_ML' THEN c.role_family IN ('data_science', 'data_engineering', 'machine_learning')
         WHEN 'PRODUCT' THEN c.role_family = 'product_management'
-        ELSE c.role_family NOT IN ('data_science', 'data_engineering', 'machine_learning', 'product_management')
+        WHEN 'STRATEGY_OPS' THEN c.role_family IN ('strategy_management', 'business_operations')
+        ELSE c.role_family NOT IN ('data_science', 'data_engineering', 'machine_learning', 'product_management', 'strategy_management', 'business_operations')
       END
       AND CASE s.support_filter
         WHEN 'VISA' THEN c.visa_sponsorship = 'YES'

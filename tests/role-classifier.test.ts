@@ -26,6 +26,19 @@ test("classifies data, ML, and product management without moving analytics roles
   assert.equal(roleCategoryForFamily("product_management"), "product");
 });
 
+test("classifies strategy and business operations management without broad operations noise", () => {
+  assert.equal(classifyRole("Senior Strategy Manager")?.roleFamily, "strategy_management");
+  assert.equal(classifyRole("Director of Corporate Strategy")?.roleFamily, "strategy_management");
+  assert.equal(classifyRole("Business Operations Manager")?.roleFamily, "business_operations");
+  assert.equal(classifyRole("Strategy & Operations Lead")?.roleFamily, "business_operations");
+  assert.equal(classifyRole("Chief of Staff")?.roleFamily, "business_operations");
+  assert.equal(classifyRole("Strategy Analyst")?.roleFamily, "strategy");
+  assert.equal(roleCategoryForFamily("strategy"), "analytics");
+  assert.equal(roleCategoryForFamily("business_operations"), "strategy_ops");
+  assert.equal(classifyRole("Warehouse Operations Manager"), null);
+  assert.equal(classifyRole("Retail Operations Manager"), null);
+});
+
 test("uses description evidence for unconventional analytics titles", () => {
   const description = "Build SQL dashboards, analyze marketplace performance metrics, and deliver data-driven insights.";
   assert.equal(classifyRole("Marketplace Performance Specialist", description)?.roleFamily, "operations_analytics");

@@ -9,9 +9,10 @@ export const ROLE_FAMILIES = [
   "data_analytics", "business_analytics", "product_analytics", "pricing_revenue",
   "growth_analytics", "operations_analytics", "bi_reporting", "strategy", "analytics_leadership",
   "data_science", "data_engineering", "machine_learning", "product_management",
+  "strategy_management", "business_operations",
 ] as const;
 export type RoleFamily = (typeof ROLE_FAMILIES)[number];
-export type RoleCategory = "analytics" | "data_ml" | "product";
+export type RoleCategory = "analytics" | "data_ml" | "product" | "strategy_ops";
 
 export type TernarySignal = "YES" | "NO" | "UNKNOWN";
 export type RemoteType = "REMOTE" | "HYBRID" | "ONSITE" | "UNKNOWN";

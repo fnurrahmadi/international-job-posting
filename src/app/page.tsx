@@ -6,7 +6,7 @@ import type { RoleCategory } from "@/lib/jobs/types";
 export const dynamic = "force-dynamic";
 
 const SUPPORT_FILTERS = new Set<SupportFilter>(["supported", "visa", "relocation", "possible", "all"]);
-const ROLE_CATEGORIES = new Set<RoleCategory>(["analytics", "data_ml", "product"]);
+const ROLE_CATEGORIES = new Set<RoleCategory>(["analytics", "data_ml", "product", "strategy_ops"]);
 
 export default async function Home({
   searchParams,
@@ -53,6 +53,7 @@ export default async function Home({
               <option value="analytics">Analytics</option>
               <option value="data_ml">Data Science, Engineering &amp; ML</option>
               <option value="product">Product Management</option>
+              <option value="strategy_ops">Strategy &amp; Business Operations</option>
             </select>
             <label htmlFor="support">Immigration support</label>
             <div>

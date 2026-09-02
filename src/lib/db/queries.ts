@@ -8,7 +8,9 @@ function rolePredicate(sql: ReturnType<typeof getSql>, roleCategory: RoleCategor
     ? sql`AND c.role_family IN ('data_science', 'data_engineering', 'machine_learning')`
     : roleCategory === "product"
       ? sql`AND c.role_family = 'product_management'`
-      : sql`AND c.role_family NOT IN ('data_science', 'data_engineering', 'machine_learning', 'product_management')`;
+      : roleCategory === "strategy_ops"
+        ? sql`AND c.role_family IN ('strategy_management', 'business_operations')`
+        : sql`AND c.role_family NOT IN ('data_science', 'data_engineering', 'machine_learning', 'product_management', 'strategy_management', 'business_operations')`;
 }
 
 export async function getDashboardStats(roleCategory: RoleCategory = "analytics") {
