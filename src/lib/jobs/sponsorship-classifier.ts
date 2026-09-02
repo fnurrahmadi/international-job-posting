@@ -69,7 +69,7 @@ const AUTH_REQUIRED = [
   /(?:must|need to) be eligible to work (?:in|within) (?:the )?[A-Z][A-Za-z .-]+ without sponsorship/i,
 ];
 const RELOCATION_POSITIVE = [
-  /relocation (?:package|assistance|support|benefit|allowance|bonus|reimbursement)(?: is| will be)? (?:available|provided|offered|included|covered)?/i,
+  /relocation (?:package|assistance|support|benefit|allowance|bonus|reimbursement)\b(?: (?:is|will be) (?:available|provided|offered|included|covered))?/i,
   /(?:we|the company|the employer) (?:support|provide|offer|cover) (?:your |international )?relocation/i,
   /(?:support|assistance) (?:with|for) (?:your )?relocation/i,
   /(?:relocation|moving) (?:costs|expenses) (?:are |will be )?(?:covered|reimbursed|paid)/i,

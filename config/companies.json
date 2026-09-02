@@ -196,5 +196,12 @@
     "identifier": "foodpanda",
     "website": "https://www.foodpanda.com",
     "careersUrl": "https://careers.foodpanda.com/jobs/"
+  },
+  {
+    "name": "Vinted",
+    "atsType": "vinted",
+    "identifier": "vinteden",
+    "website": "https://www.vinted.com",
+    "careersUrl": "https://careers.vinted.com/jobs"
   }
 ]

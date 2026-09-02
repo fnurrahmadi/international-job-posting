@@ -32,7 +32,7 @@ export async function runIngestion(companies: CompanyConfig[], concurrency = 4) 
         const job = normalizeJob(raw);
         const role = classifyRole(raw.title, job.descriptionText);
         if (!role) return [];
-        const sponsorship = classifySponsorship(job.descriptionText);
+        const sponsorship = classifySponsorship(`${job.title}. ${job.descriptionText}`);
         const baseClassification = {
           roleFamily: role.roleFamily,
           seniority: classifySeniority(job.title),

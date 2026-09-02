@@ -20,7 +20,10 @@ async function audit(company: CompanyConfig): Promise<AuditRow> {
   try {
     const jobs = await fetchCompanyJobs(company);
     const relevant = jobs.filter((job) => classifyRole(job.title, normalizeJob(job).descriptionText));
-    const signals = relevant.map((job) => classifySponsorship(normalizeJob(job).descriptionText));
+    const signals = relevant.map((job) => {
+      const normalized = normalizeJob(job);
+      return classifySponsorship(`${normalized.title}. ${normalized.descriptionText}`);
+    });
     return {
       company: company.name,
       ats: company.atsType,

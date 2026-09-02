@@ -20,7 +20,7 @@ async function main() {
       skipped += 1;
       continue;
     }
-    const sponsorship = classifySponsorship(job.descriptionText);
+    const sponsorship = classifySponsorship(`${job.title}. ${job.descriptionText}`);
     const base = {
       roleFamily: role.roleFamily,
       seniority: classifySeniority(job.title),
