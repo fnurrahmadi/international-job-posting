@@ -1,17 +1,19 @@
-import { getDashboardStats, getRecentJobs, type SupportFilter } from "@/lib/db/queries";
+import { getDashboardStats, getRecentJobs, type CountryFilter, type SupportFilter } from "@/lib/db/queries";
 import Link from "next/link";
 import { AlertForm } from "@/components/alert-form";
 import type { RoleCategory } from "@/lib/jobs/types";
 
 export const dynamic = "force-dynamic";
 
-const SUPPORT_FILTERS = new Set<SupportFilter>(["supported", "visa", "relocation", "possible", "all"]);
+const SUPPORT_FILTERS = new Set<SupportFilter>(["supported", "visa", "relocation", "possible", "global", "non_eu", "eu_only", "permit", "no_sponsorship", "unknown", "english", "local_language", "all"]);
+const COUNTRY_FILTERS = new Set<CountryFilter>(["all", "DK", "FI", "nordic"]);
+const ALERT_FILTERS = new Set(["supported", "visa", "relocation", "possible"]);
 const ROLE_CATEGORIES = new Set<RoleCategory>(["analytics", "data_ml", "product", "strategy_ops"]);
 
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Promise<{ support?: string | string[]; role?: string | string[] }>;
+  searchParams: Promise<{ support?: string | string[]; role?: string | string[]; country?: string | string[] }>;
 }) {
   const params = await searchParams;
   const requestedFilter = Array.isArray(params.support) ? params.support[0] : params.support;
@@ -22,9 +24,11 @@ export default async function Home({
   const roleCategory: RoleCategory = requestedRole && ROLE_CATEGORIES.has(requestedRole as RoleCategory)
     ? requestedRole as RoleCategory
     : "analytics";
+  const requestedCountry = Array.isArray(params.country) ? params.country[0] : params.country;
+  const countryFilter: CountryFilter = requestedCountry && COUNTRY_FILTERS.has(requestedCountry as CountryFilter) ? requestedCountry as CountryFilter : "all";
   const configured = Boolean(process.env.DATABASE_URL);
   const [stats, jobs] = configured
-    ? await Promise.all([getDashboardStats(roleCategory), getRecentJobs(20, supportFilter, roleCategory)])
+    ? await Promise.all([getDashboardStats(roleCategory), getRecentJobs(20, supportFilter, roleCategory, countryFilter)])
     : [{ jobs: 0, companies: 0, sponsorPositive: 0 }, []];
 
   return (
@@ -62,10 +66,23 @@ export default async function Home({
                 <option value="visa">Visa supported</option>
                 <option value="relocation">Relocation supported</option>
                 <option value="possible">Possible international opportunities</option>
+                <option value="non_eu">Accessible from outside the EU</option>
+                <option value="global">Global relocation</option>
+                <option value="eu_only">EU/EEA-only relocation</option>
+                <option value="permit">Permit feasible</option>
+                <option value="no_sponsorship">No sponsorship</option>
+                <option value="unknown">Unknown sponsorship</option>
+                <option value="english">English-speaking roles</option>
+                <option value="local_language">Local language required</option>
                 <option value="all">All jobs, including unknown</option>
               </select>
               <button type="submit">Apply</button>
             </div>
+            <label htmlFor="country">Market</label>
+            <select id="country" name="country" defaultValue={countryFilter}>
+              <option value="all">All countries</option><option value="nordic">Denmark &amp; Finland</option>
+              <option value="DK">Denmark</option><option value="FI">Finland</option>
+            </select>
           </form>
         </div>
 
@@ -84,10 +101,14 @@ export default async function Home({
                 </div>
                 <div className="signals">
                   <span className="score">Support score: {job.supportScore}</span>
+                  <span className="score">Role match: {Math.round(job.roleMatchScore * 100)}%</span>
                   {job.possibleSupport ? <span data-signal="possible">Possible opportunity</span> : null}
                   <span>{job.roleFamily.replaceAll("_", " ")}</span>
                   <span data-signal={job.visaSponsorship.toLowerCase()}>Visa: {job.visaSponsorship}</span>
                   <span data-signal={job.relocationSupport.toLowerCase()}>Relocation: {job.relocationSupport}</span>
+                  {job.relocationScope !== "UNKNOWN" ? <span>Scope: {job.relocationScope.replaceAll("_", " ")}</span> : null}
+                  {job.permitFeasibility !== "UNKNOWN" ? <span data-signal={job.permitFeasibility === "LOW" ? "no" : "possible"}>Permit: {job.permitFeasibility}</span> : null}
+                  <span data-signal={job.nonEuEligible.toLowerCase()}>Non-EU: {job.nonEuEligible}</span>
                 </div>
               </Link>
             ))}
@@ -95,10 +116,10 @@ export default async function Home({
         )}
       </section>
 
-      {configured && supportFilter !== "all" ? (
+      {configured && ALERT_FILTERS.has(supportFilter) ? (
         <section className="alerts">
           <div><p className="eyebrow">Daily alerts</p><h2>Save this search</h2><p className="muted">Get only newly discovered matches for the current role and support filters.</p></div>
-          <AlertForm supportFilter={supportFilter} roleCategory={roleCategory} />
+          <AlertForm supportFilter={supportFilter as "supported" | "visa" | "relocation" | "possible"} roleCategory={roleCategory} />
         </section>
       ) : null}
     </main>

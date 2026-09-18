@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import type { NormalizedJob, RawJob, RemoteType } from "./types";
 import { extractCountryCodes, extractEligibleCountryCodes, inferCountryCode } from "./location-intelligence";
+import { extractSalary } from "./salary-intelligence";
 
 const ENTITIES: Record<string, string> = { amp: "&", quot: '"', apos: "'", lt: "<", gt: ">", nbsp: " " };
 
@@ -35,6 +36,7 @@ export function normalizeJob(raw: RawJob): NormalizedJob {
   const location = raw.location.trim().replace(/\s+/g, " ");
   const locationCountryCodes = extractCountryCodes(location);
   const eligibleCountryCodes = extractEligibleCountryCodes(descriptionText);
+  const salary = extractSalary(`${raw.title} ${descriptionText}`);
   return {
     ...raw,
     title: raw.title.trim().replace(/\s+/g, " "),
@@ -44,5 +46,6 @@ export function normalizeJob(raw: RawJob): NormalizedJob {
     remoteType: remoteType(raw.title, raw.location, descriptionText),
     metadata: { ...raw.metadata, locationCountryCodes, eligibleCountryCodes },
     contentHash: createHash("sha256").update(`${raw.title}\n${raw.location}\n${descriptionText}`).digest("hex"),
+    ...salary,
   };
 }

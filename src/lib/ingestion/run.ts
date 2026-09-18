@@ -5,6 +5,8 @@ import { classifyRole, classifySeniority } from "@/lib/jobs/role-classifier";
 import { classifySponsorship } from "@/lib/jobs/sponsorship-classifier";
 import { calculateSupportScore } from "@/lib/jobs/support-score";
 import type { CompanyConfig, JobClassification } from "@/lib/jobs/types";
+import { assessLanguage } from "@/lib/jobs/language-intelligence";
+import { assessPermitFeasibility } from "@/lib/jobs/permit-feasibility";
 
 async function mapLimit<T>(items: T[], limit: number, worker: (item: T) => Promise<void>) {
   let cursor = 0;
@@ -33,11 +35,21 @@ export async function runIngestion(companies: CompanyConfig[], concurrency = 4) 
         const role = classifyRole(raw.title, job.descriptionText);
         if (!role) return [];
         const sponsorship = classifySponsorship(`${job.title}. ${job.descriptionText}`);
+        const language = assessLanguage(job.descriptionText, job.countryCode);
+        const permit = assessPermitFeasibility({
+          countryCode: job.countryCode, roleFamily: role.roleFamily,
+          salary: job, visaSupport: sponsorship.visaSponsorship,
+          authorizationRequired: sponsorship.existingWorkAuthorizationRequired,
+          relocationScope: sponsorship.relocationScope,
+        });
         const baseClassification = {
           roleFamily: role.roleFamily,
           seniority: classifySeniority(job.title),
           ...sponsorship,
           confidence: Math.min(role.score, sponsorship.confidence),
+          roleMatchScore: role.score,
+          ...language,
+          ...permit,
         };
         const classification: JobClassification = {
           ...baseClassification,
@@ -45,7 +57,7 @@ export async function runIngestion(companies: CompanyConfig[], concurrency = 4) 
         };
         return [{ job, classification }];
       });
-      if (company.atsType === "workable" || company.atsType === "arbeitnow") {
+      if (company.atsType === "workable" || company.atsType === "arbeitnow" || company.atsType === "thehub") {
         const byCompany = new Map<string, typeof relevant>();
         for (const row of relevant) {
           const key = `${row.job.company.atsType}:${row.job.company.identifier}`;

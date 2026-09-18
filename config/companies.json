@@ -203,5 +203,12 @@
     "identifier": "vinteden",
     "website": "https://www.vinted.com",
     "careersUrl": "https://careers.vinted.com/jobs"
+  },
+  {
+    "name": "The Hub Denmark & Finland",
+    "atsType": "thehub",
+    "identifier": "DK,FI",
+    "website": "https://thehub.io",
+    "careersUrl": "https://thehub.io/jobs"
   }
 ]

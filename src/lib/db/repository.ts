@@ -1,6 +1,7 @@
 import { getSql } from "./client";
 import type { CompanyConfig, JobClassification, NormalizedJob } from "@/lib/jobs/types";
 import { SPONSORSHIP_CLASSIFIER_VERSION } from "@/lib/jobs/sponsorship-classifier";
+import { PERMIT_RULE_VERSION } from "@/lib/jobs/permit-feasibility";
 
 export async function startIngestionRun(companiesAttempted: number): Promise<string> {
   const sql = getSql();
@@ -46,26 +47,36 @@ export async function saveCompanyJobs(company: CompanyConfig, rows: Array<{ job:
       seenIds.push(job.sourceJobId);
       const [savedJob] = await tx<[{ id: string }]>`
         INSERT INTO jobs (company_id, source, source_job_id, title, description_html, description_text,
-          location, country_code, remote_type, url, posted_at, content_hash, source_metadata)
+          location, country_code, remote_type, url, posted_at, content_hash, source_metadata,
+          salary_min, salary_max, salary_currency, salary_period)
         VALUES (${savedCompany.id}, ${job.source}, ${job.sourceJobId}, ${job.title}, ${job.descriptionHtml},
           ${job.descriptionText}, ${job.location}, ${job.countryCode}, ${job.remoteType}, ${job.url},
-          ${job.postedAt}, ${job.contentHash}, ${tx.json(JSON.parse(JSON.stringify(job.metadata)))})
+          ${job.postedAt}, ${job.contentHash}, ${tx.json(JSON.parse(JSON.stringify(job.metadata)))},
+          ${job.salaryMin}, ${job.salaryMax}, ${job.salaryCurrency}, ${job.salaryPeriod})
         ON CONFLICT (source, source_job_id) DO UPDATE SET title = EXCLUDED.title,
           description_html = EXCLUDED.description_html, description_text = EXCLUDED.description_text,
           location = EXCLUDED.location, country_code = EXCLUDED.country_code, remote_type = EXCLUDED.remote_type,
           url = EXCLUDED.url, posted_at = EXCLUDED.posted_at, content_hash = EXCLUDED.content_hash,
-          source_metadata = EXCLUDED.source_metadata, last_seen_at = NOW(), status = 'ACTIVE'
+          source_metadata = EXCLUDED.source_metadata, salary_min = EXCLUDED.salary_min, salary_max = EXCLUDED.salary_max,
+          salary_currency = EXCLUDED.salary_currency, salary_period = EXCLUDED.salary_period, last_seen_at = NOW(), status = 'ACTIVE'
         RETURNING id::text
       `;
       await tx`
         INSERT INTO job_classifications (job_id, role_family, seniority, visa_sponsorship,
           relocation_support, international_candidates, existing_work_authorization_required,
-          confidence, evidence, classifier_version, support_score, possible_support, possible_evidence)
+          confidence, evidence, classifier_version, support_score, possible_support, possible_evidence,
+          role_match_score, relocation_confidence, visa_confidence, relocation_scope,
+          permit_feasibility, permit_pathway, permit_reason, permit_rule_version, non_eu_eligible,
+          relocation_evidence, visa_evidence, english_speaking, local_language_required, language_requirements)
         VALUES (${savedJob.id}, ${classification.roleFamily}, ${classification.seniority},
           ${classification.visaSponsorship}, ${classification.relocationSupport},
           ${classification.internationalCandidates}, ${classification.existingWorkAuthorizationRequired},
           ${classification.confidence}, ${tx.json(classification.evidence)}, ${SPONSORSHIP_CLASSIFIER_VERSION}, ${classification.supportScore},
-          ${classification.possibleSupport}, ${tx.json(classification.possibleEvidence)})
+          ${classification.possibleSupport}, ${tx.json(classification.possibleEvidence)},
+          ${classification.roleMatchScore}, ${classification.relocationConfidence}, ${classification.visaConfidence}, ${classification.relocationScope},
+          ${classification.permitFeasibility}, ${classification.permitPathway}, ${classification.permitReason}, ${PERMIT_RULE_VERSION}, ${classification.nonEuEligible},
+          ${tx.json(classification.relocationEvidence)}, ${tx.json(classification.visaEvidence)}, ${classification.englishSpeaking},
+          ${classification.localLanguageRequired}, ${tx.json(classification.languageRequirements)})
         ON CONFLICT (job_id) DO UPDATE SET role_family = EXCLUDED.role_family,
           seniority = EXCLUDED.seniority, visa_sponsorship = EXCLUDED.visa_sponsorship,
           relocation_support = EXCLUDED.relocation_support,
@@ -73,7 +84,15 @@ export async function saveCompanyJobs(company: CompanyConfig, rows: Array<{ job:
           existing_work_authorization_required = EXCLUDED.existing_work_authorization_required,
           confidence = EXCLUDED.confidence, evidence = EXCLUDED.evidence,
           classifier_version = EXCLUDED.classifier_version, support_score = EXCLUDED.support_score,
-          possible_support = EXCLUDED.possible_support, possible_evidence = EXCLUDED.possible_evidence, classified_at = NOW()
+          possible_support = EXCLUDED.possible_support, possible_evidence = EXCLUDED.possible_evidence,
+          role_match_score = EXCLUDED.role_match_score, relocation_confidence = EXCLUDED.relocation_confidence,
+          visa_confidence = EXCLUDED.visa_confidence, relocation_scope = EXCLUDED.relocation_scope,
+          permit_feasibility = EXCLUDED.permit_feasibility, permit_pathway = EXCLUDED.permit_pathway,
+          permit_reason = EXCLUDED.permit_reason, permit_rule_version = EXCLUDED.permit_rule_version,
+          non_eu_eligible = EXCLUDED.non_eu_eligible, relocation_evidence = EXCLUDED.relocation_evidence,
+          visa_evidence = EXCLUDED.visa_evidence, english_speaking = EXCLUDED.english_speaking,
+          local_language_required = EXCLUDED.local_language_required, language_requirements = EXCLUDED.language_requirements,
+          classified_at = NOW()
       `;
     }
     if (seenIds.length > 0) {

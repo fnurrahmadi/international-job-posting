@@ -18,6 +18,7 @@ import { fetchSuccessFactors } from "./successfactors";
 import { fetchBolt } from "./bolt";
 import { fetchAttrax } from "./attrax";
 import { fetchVinted } from "./vinted";
+import { fetchTheHub } from "./thehub";
 
 export async function fetchCompanyJobs(company: CompanyConfig): Promise<RawJob[]> {
   switch (company.atsType) {
@@ -40,5 +41,6 @@ export async function fetchCompanyJobs(company: CompanyConfig): Promise<RawJob[]
     case "bolt": return fetchBolt(company);
     case "attrax": return fetchAttrax(company);
     case "vinted": return fetchVinted(company);
+    case "thehub": return fetchTheHub(company);
   }
 }

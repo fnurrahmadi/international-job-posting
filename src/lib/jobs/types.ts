@@ -1,7 +1,7 @@
 export const ATS_TYPES = [
   "greenhouse", "lever", "ashby", "smartrecruiters", "recruitee", "personio", "workable", "workday",
   "comeet", "breezy", "teamtailor", "pinpoint", "jobvite", "arbeitnow", "successfactors", "oracle",
-  "bolt", "attrax", "vinted",
+  "bolt", "attrax", "vinted", "thehub",
 ] as const;
 export type AtsType = (typeof ATS_TYPES)[number];
 
@@ -15,6 +15,8 @@ export type RoleFamily = (typeof ROLE_FAMILIES)[number];
 export type RoleCategory = "analytics" | "data_ml" | "product" | "strategy_ops";
 
 export type TernarySignal = "YES" | "NO" | "UNKNOWN";
+export type RelocationScope = "GLOBAL" | "EU_ONLY" | "EEA_ONLY" | "COUNTRY_ONLY" | "UNKNOWN";
+export type PermitFeasibility = "HIGH" | "POSSIBLE" | "LOW" | "UNKNOWN";
 export type RemoteType = "REMOTE" | "HYBRID" | "ONSITE" | "UNKNOWN";
 
 export interface CompanyConfig {
@@ -44,6 +46,10 @@ export interface NormalizedJob extends RawJob {
   countryCode: string | null;
   remoteType: RemoteType;
   contentHash: string;
+  salaryMin: number | null;
+  salaryMax: number | null;
+  salaryCurrency: string | null;
+  salaryPeriod: "YEAR" | "MONTH" | "HOUR" | null;
 }
 
 export interface JobClassification {
@@ -58,4 +64,17 @@ export interface JobClassification {
   possibleSupport: boolean;
   possibleEvidence: string[];
   supportScore: number;
+  roleMatchScore: number;
+  relocationConfidence: number;
+  visaConfidence: number;
+  relocationScope: RelocationScope;
+  permitFeasibility: PermitFeasibility;
+  permitPathway: string | null;
+  permitReason: string | null;
+  nonEuEligible: TernarySignal;
+  relocationEvidence: string[];
+  visaEvidence: string[];
+  englishSpeaking: TernarySignal;
+  localLanguageRequired: TernarySignal;
+  languageRequirements: string[];
 }

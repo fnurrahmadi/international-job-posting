@@ -11,7 +11,9 @@ export interface SupportScoreBreakdown {
   total: number;
 }
 
-export function calculateSupportScore(classification: Omit<JobClassification, "supportScore">): SupportScoreBreakdown {
+type ScoreInput = Pick<JobClassification, "visaSponsorship" | "relocationSupport" | "internationalCandidates" | "existingWorkAuthorizationRequired" | "evidence" | "possibleSupport" | "possibleEvidence">;
+
+export function calculateSupportScore(classification: ScoreInput): SupportScoreBreakdown {
   const baseline = 10;
   const visa = classification.visaSponsorship === "YES" ? 40 : classification.visaSponsorship === "NO" ? -30 : 0;
   const relocation = classification.relocationSupport === "YES" ? 35 : classification.relocationSupport === "NO" ? -15 : 0;

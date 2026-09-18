@@ -1,7 +1,7 @@
-import type { TernarySignal } from "./types";
+import type { RelocationScope, TernarySignal } from "./types";
 import { assessInternationalEligibility } from "./location-intelligence";
 
-export const SPONSORSHIP_CLASSIFIER_VERSION = "rules-v7";
+export const SPONSORSHIP_CLASSIFIER_VERSION = "rules-v8-nordic";
 
 const VISA_POSITIVE = [
   /(?:visa|immigration|work permit|work authorization) sponsorship (?:is |will be )?(?:available|provided|offered)/i,
@@ -115,6 +115,11 @@ const POSSIBLE_SUPPORT = [
   /no discrimination (?:on the basis of|based on).*(?:nationality|citizenship)/i,
 ];
 
+const GLOBAL_SCOPE = [/(?:global|international|worldwide) relocation/i, /relocation (?:support|package).{0,80}(?:from (?:anywhere|abroad)|worldwide|international candidates)/i];
+const EU_SCOPE = [/relocation (?:support|assistance|package)?\s*(?:is )?(?:available )?(?:only )?(?:within|from) (?:the )?EU\b/i, /\bEU candidates? only\b/i, /must already have (?:EU|European Union) work authorization/i];
+const EEA_SCOPE = [/relocation (?:support|assistance|package)?\s*(?:is )?(?:available )?(?:only )?(?:within|from) (?:the )?EEA\b/i, /\bEEA applicants? only\b/i, /must already have (?:EU\/EEA|EEA) work authorization/i];
+const COUNTRY_SCOPE = [/must already (?:reside|live|be based) in (?:Denmark|Finland)/i, /relocation (?:support|assistance) (?:within|inside) (?:Denmark|Finland)/i];
+
 const CONDITIONAL = /\b(?:may|might|could|potentially|case[- ]by[- ]case|depending on|subject to|where possible|where applicable|at (?:our|the company's) discretion|for exceptional candidates?)\b/i;
 const SCREENING_QUESTION = /(?:\?|^(?:do|does|will|would|are|can|have) you\b).*(?:visa|sponsor|immigration|work permit|work authorization|right to work|relocat)/i;
 
@@ -146,6 +151,10 @@ export function classifySponsorship(text: string) {
     || eligibility.existingWorkAuthorizationRequired === "YES";
   const visaSponsorship = authRequired ? "NO" : signal(segments, VISA_POSITIVE, VISA_NEGATIVE);
   const relocationSupport = signal(segments, RELOCATION_POSITIVE, RELOCATION_NEGATIVE);
+  const relocationScope: RelocationScope = segments.some((segment) => matchesAny(segment, EEA_SCOPE)) ? "EEA_ONLY"
+    : segments.some((segment) => matchesAny(segment, EU_SCOPE)) ? "EU_ONLY"
+      : segments.some((segment) => matchesAny(segment, COUNTRY_SCOPE)) ? "COUNTRY_ONLY"
+        : segments.some((segment) => matchesAny(segment, GLOBAL_SCOPE)) ? "GLOBAL" : "UNKNOWN";
   const textInternational = signal(segments, INTERNATIONAL_POSITIVE, [...AUTH_REQUIRED, ...VISA_NEGATIVE]);
   const internationalCandidates: TernarySignal = eligibility.internationalCandidates === "NO" || textInternational === "NO"
     ? "NO"
@@ -153,7 +162,9 @@ export function classifySponsorship(text: string) {
   const possibleEvidence = visaSponsorship === "UNKNOWN" && relocationSupport === "UNKNOWN" && !authRequired
     ? evidenceFor(segments, POSSIBLE_SUPPORT)
     : [];
-  const allPatterns = [...VISA_POSITIVE, ...VISA_NEGATIVE, ...AUTH_REQUIRED, ...RELOCATION_POSITIVE, ...RELOCATION_NEGATIVE, ...INTERNATIONAL_POSITIVE];
+  const visaEvidence = evidenceFor(segments, [...VISA_POSITIVE, ...VISA_NEGATIVE, ...AUTH_REQUIRED]);
+  const relocationEvidence = evidenceFor(segments, [...RELOCATION_POSITIVE, ...RELOCATION_NEGATIVE, ...GLOBAL_SCOPE, ...EU_SCOPE, ...EEA_SCOPE, ...COUNTRY_SCOPE]);
+  const allPatterns = [...VISA_POSITIVE, ...VISA_NEGATIVE, ...AUTH_REQUIRED, ...RELOCATION_POSITIVE, ...RELOCATION_NEGATIVE, ...INTERNATIONAL_POSITIVE, ...GLOBAL_SCOPE, ...EU_SCOPE, ...EEA_SCOPE, ...COUNTRY_SCOPE];
   const evidence = [...new Set([...evidenceFor(segments, allPatterns), ...eligibility.evidence])].slice(0, 5);
 
   return {
@@ -165,5 +176,10 @@ export function classifySponsorship(text: string) {
     possibleSupport: possibleEvidence.length > 0,
     possibleEvidence,
     confidence: evidence.length ? 0.9 : 0.5,
+    relocationScope,
+    visaEvidence,
+    relocationEvidence,
+    visaConfidence: visaEvidence.length ? 0.95 : 0.4,
+    relocationConfidence: relocationEvidence.length ? 0.95 : 0.4,
   };
 }
