@@ -2,22 +2,18 @@ name: Ingest jobs
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "config/companies.json"
-      - "scripts/**"
-      - "sql/**"
-      - "src/lib/ats/**"
-      - "src/lib/ingestion/**"
-      - "src/lib/jobs/**"
-      - ".github/workflows/ingest-jobs.yml"
+    inputs:
+      full_maintenance:
+        description: "Reclassify all active jobs in addition to normal ingestion"
+        required: false
+        default: false
+        type: boolean
   schedule:
     - cron: "17 19 * * *"
 
 concurrency:
   group: daily-job-ingestion
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   ingest:
@@ -44,8 +40,17 @@ jobs:
       - run: pnpm ingest
         env:
           INGEST_CONCURRENCY: "4"
-      - run: pnpm jobs:reclassify
-      - run: pnpm jobs:check-links
+      - name: Reclassify existing jobs
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.full_maintenance }}
+        run: pnpm jobs:reclassify
+      - name: Check application links weekly
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$(date -u +%u)" = "7" ]; then
+            pnpm jobs:check-links
+          else
+            echo "Skipping link check; it runs on Sundays or manual executions."
+          fi
         env:
           LINK_CHECK_LIMIT: "100"
       - run: pnpm alerts:send
